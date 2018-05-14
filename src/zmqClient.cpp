@@ -49,7 +49,7 @@ namespace zmq_client
         if(const char* env_p = std::getenv("ZMQ_CACHE_QUERIES"))
             m_useCache = (env_p[0] == '1');
         
-        std::cout << zmqLogger::LOG_PREFIX << "Created ZMQ Client. Caching Queries: " << (m_useCache ? "True" : "False") << std::endl;
+        std::cout << zmqLogger::LOG_PREFIX << "Created ZMQ Client! Caching Queries: " << (m_useCache ? "True" : "False") << std::endl;
 
         // Disk location for zmq cache file
         m_cacheFilePath = ZMQ_CACHE_LOCATION + m_clientID + ZMQ_CACHE_FILETYPE;
@@ -120,6 +120,8 @@ namespace zmq_client
         fs.close();
 
         std::cout << "Loaded cache from " << m_cacheFilePath << std::endl;
+        std::cout << "Cache holds " << m_cachedQueries.size() << " queries." << std::endl;
+
 
         return true;
     }
