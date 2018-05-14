@@ -21,7 +21,5 @@ def commands():
     #env.ZMQ_CLIENT_LIB.set("{root}/lib/libzmq_client_cpp.a")
 
     env.LD_LIBRARY_PATH.append('{root}/lib')
-    env.USD_CACHE_LOCATION.set("/home/13109816/zmq/usd.zmqcache")
-    env.LOOK_FILES_CACHE_LOCATION.set("/home/13109816/zmq/look_files.zmqcache")
 
     env.ZMQ_CLIENT_LOG_LEVEL.set("1")
