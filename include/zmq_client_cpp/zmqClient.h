@@ -19,7 +19,8 @@ namespace zmq_client
     const int ZMQ_TIMEOUT = 60000;
     const int ZMQ_RETRIES = 50;
 
-    const bool ZMQ_CACHE_QUERIES = false;
+    const bool ZMQ_CACHE_QUERIES = true;
+    const bool ZMQ_CACHE_EXTERNAL = false;
     const double ZMQ_CACHE_TIMEOUT = 100.0;
     const std::string ZMQ_CACHE_LOCATION = "/usr/tmp/zmq/";
     const std::string ZMQ_CACHE_FILETYPE = ".zmqcache";
@@ -69,6 +70,7 @@ namespace zmq_client
 
         protected:
             bool m_useCache;
+            bool m_cacheToDisk;
 
             std::string m_clientID;
             std::string m_cacheFilePath;
