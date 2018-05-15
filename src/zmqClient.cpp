@@ -25,7 +25,7 @@ namespace zmq_client
 
     zmqClient::zmqClient() : 
         m_useCache(zmq_client::ZMQ_CACHE_QUERIES), 
-        m_cacheToDisk(zmq_client::ZMQ_CACHE_EXTERNAL) 
+        m_cacheToDisk(zmq_client::ZMQ_CACHE_EXTERNAL),
         m_clientID("default"), 
         m_cacheFilePath("")
     { 
