@@ -67,8 +67,8 @@ namespace zmq_client
 
     void zmqClient::destroy()
     {
-        //saveCache();
-        appendCache();
+        saveCache();
+        //appendCache();
     }
 
     // -- Protected
@@ -170,6 +170,8 @@ namespace zmq_client
                 std::cout << zmqLogger::LOG_PREFIX << "Parser had to retry: " << i <<  " | " << a_query << "\n\n\n";
 
             if(m_useCache) {
+                std::cout << "Searching cache for query: " << a_query << std::endl;
+
                 // Search for cached result
                 const std::map<std::string, zmq_client::zmqQueryCache>::iterator cached_result = m_cachedQueries.find(a_query);
 
@@ -221,7 +223,7 @@ namespace zmq_client
                 if(realPath[0] != '/')
                     continue;
 
-            std::cout << zmqLogger::LOG_PREFIX << a_query << "  |  " << realPath << "\n\n";
+            std::cout << zmqLogger::LOG_PREFIX << "Received Query Response: " << a_query << "  |  " << realPath << "\n\n";
 
             if(m_useCache) {
                 // Cache reply
