@@ -23,12 +23,20 @@ namespace zmq_client
 
     // Constructors and Destructors
 
-    zmqClient::zmqClient() : m_useCache(zmq_client::ZMQ_CACHE_QUERIES), m_clientID("default"), m_cacheFilePath("")
+    zmqClient::zmqClient() : 
+        m_useCache(zmq_client::ZMQ_CACHE_QUERIES), 
+        m_cacheToDisk(zmq_client::ZMQ_CACHE_EXTERNAL) 
+        m_clientID("default"), 
+        m_cacheFilePath("")
     { 
         setup();
     }
 
-    zmqClient::zmqClient(const char* a_clientID) : m_useCache(zmq_client::ZMQ_CACHE_QUERIES), m_clientID(a_clientID), m_cacheFilePath("")
+    zmqClient::zmqClient(const char* a_clientID) : 
+        m_useCache(zmq_client::ZMQ_CACHE_QUERIES), 
+        m_cacheToDisk(zmq_client::ZMQ_CACHE_EXTERNAL), 
+        m_clientID(a_clientID), 
+        m_cacheFilePath("")
     {
         setup();
     }
@@ -48,8 +56,11 @@ namespace zmq_client
         // Cache query setup
         if(const char* env_p = std::getenv("ZMQ_CACHE_QUERIES"))
             m_useCache = (env_p[0] == '1');
+        if(const char* env_p = std::getenv("ZMQ_CACHE_EXTERNAL"))
+            m_cacheToDisk = (env_p[0] == '1');
+            
         
-        std::cout << zmqLogger::LOG_PREFIX << "Created ZMQ Client! Caching Queries: " << (m_useCache ? "True" : "False") << std::endl;
+        std::cout << zmqLogger::LOG_PREFIX << "Created ZMQ Client! Caching Queries: (Internal - " << (m_useCache ? "True" : "False") << ", External - " << (m_cacheToDisk ? "True" : "False") << std::endl;
 
         // Disk location for zmq cache file
         m_cacheFilePath = ZMQ_CACHE_LOCATION + m_clientID + ZMQ_CACHE_FILETYPE;
@@ -62,13 +73,14 @@ namespace zmq_client
             m_cacheFilePath = env_p;
 
         // Load cache from file
-        std::cout << "Loading cache: " << loadCache();
+        if(m_cacheToDisk)
+            std::cout << "Loading cache: " << loadCache();
     }
 
     void zmqClient::destroy()
     {
-        saveCache();
-        //appendCache();
+        if(m_cacheToDisk)
+            saveCache();
     }
 
     // -- Protected
