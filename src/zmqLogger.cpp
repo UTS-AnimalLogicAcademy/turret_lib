@@ -5,8 +5,8 @@ namespace zmq_client
 {
     // -- Private
 
-    std::string zmqLogger::m_prefix = "ZMQ Logger";
-    int zmqLogger::m_logLevel = 4;
+    std::string zmqLogger::m_prefix = "ZMQ Resolver";
+    int zmqLogger::m_logLevel = zmqLogger::ZMQ_INTERNAL;
     bool zmqLogger::m_logEnabled = true;
 
     std::mutex& zmqLogger::getMutex() { 
