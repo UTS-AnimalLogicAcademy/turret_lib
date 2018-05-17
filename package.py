@@ -2,7 +2,7 @@
 
 name = 'zmq_client_cpp'
 
-version = '0.0.5'
+version = '0.0.6'
 
 authors = [ 'ben.skinner' ]
 
@@ -21,5 +21,3 @@ def commands():
     #env.ZMQ_CLIENT_LIB.set("{root}/lib/libzmq_client_cpp.a")
 
     env.LD_LIBRARY_PATH.append('{root}/lib')
-
-    env.ZMQ_CLIENT_LOG_LEVEL.set("1")
