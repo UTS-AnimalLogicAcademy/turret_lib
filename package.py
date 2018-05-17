@@ -2,7 +2,7 @@
 
 name = 'zmq_client_cpp'
 
-version = '0.0.5'
+version = '0.0.6'
 
 authors = [ 'ben.skinner' ]
 
