@@ -2,9 +2,9 @@
 
 name = 'zmq_client_cpp'
 
-version = '0.0.6'
+version = '0.0.7'
 
-authors = [ 'ben.skinner' ]
+authors = [ 'ben.skinner', 'daniel.flood' ]
 
 requires = ['libzmq',
     'boost-1.55']

@@ -15,6 +15,8 @@
 #include <boost/serialization/map.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 #include <boost/filesystem.hpp>
 
 namespace zmq_client
@@ -44,8 +46,7 @@ namespace zmq_client
     zmqClient::~zmqClient() 
     { 
         destroy();
-        zmqLogger::Instance()->Log("Destroyed ZMQ Client.", zmqLogger::LOG_LEVELS::ZMQ_INTERNAL);
-        //std::cout << zmqLogger::Instance()->LOG_PREFIX << "Destroyed ZMQ Client." << std::endl;
+        zmqLogger::Instance()->Log("Destroyed " + m_clientID + " client.", zmqLogger::LOG_LEVELS::ZMQ_INTERNAL);
     }
 
     // -- Protected 
@@ -55,35 +56,48 @@ namespace zmq_client
     void zmqClient::setup()
     {
         // Cache query setup
-        if(const char* env_p = std::getenv("ZMQ_CACHE_QUERIES"))
+        if(const char* env_p = std::getenv("ZMQ_CACHE_QUERIES")) {
             m_useCache = (env_p[0] == '1');
-        if(const char* env_p = std::getenv("ZMQ_CACHE_EXTERNAL"))
+        }
+        if(const char* env_p = std::getenv("ZMQ_CACHE_EXTERNAL")) {
             m_cacheToDisk = (env_p[0] == '1');
-            
-        
-        //std::cout << zmqLogger::Instance()->LOG_PREFIX << "Created ZMQ Client! Caching Queries: (Internal - " << (m_useCache ? "True" : "False") << ", External - " << (m_cacheToDisk ? "True" : "False") << ")" << std::endl;
+        }
 
-        zmqLogger::Instance()->Log("Created ZMQ Client. Caching Queries (Internal: " + std::string((m_useCache ? "True" : "False")) + ", External - " + std::string((m_cacheToDisk ? "True" : "False")) + ")", zmqLogger::LOG_LEVELS::ZMQ_INTERNAL);
+        // the session_id is set by the DCC app on scene load/new scene
+        if (const char* sessionID = std::getenv("TURRET_SESSION_ID")) {
+            m_sessionID = sessionID;
+        }
 
-        // Disk location for zmq cache file
-        m_cacheFilePath = ZMQ_CACHE_LOCATION + m_clientID + ZMQ_CACHE_FILETYPE;
+        zmqLogger::Instance()->Log("Created ZMQ Client. Caching Queries (Internal: "
+                                   + std::string((m_useCache ? "True" : "False")) + ", External - "
+                                   + std::string((m_cacheToDisk ? "True" : "False")) + ")",
+                                   zmqLogger::LOG_LEVELS::ZMQ_INTERNAL);
 
         // Get cache path from env var if exists
         std::string clientIDUppercase = m_clientID;
         std::transform(clientIDUppercase.begin(), clientIDUppercase.end(),clientIDUppercase.begin(), ::toupper);
 
-        if(const char* env_p = std::getenv((clientIDUppercase + "_CACHE_LOCATION").c_str()))
+        // a cache filepath override was specified by env var:
+        if(const char* env_p = std::getenv((clientIDUppercase + "_CACHE_LOCATION").c_str())) {
             m_cacheFilePath = env_p;
+        }
+        // determine cache filepath by variables:
+        else {
+            m_cacheFilePath = ZMQ_CACHE_LOCATION + m_clientID + "_" + m_sessionID + ZMQ_CACHE_FILETYPE;
+        }
 
         // Load cache from file
-        if(m_cacheToDisk)
-            zmqLogger::Instance()->Log("Loading cache: " + std::to_string(loadCache()), zmqLogger::LOG_LEVELS::CACHE_FILE_IO);
+        if(m_cacheToDisk) {
+            zmqLogger::Instance()->Log(m_clientID + " resolver loading cache: "
+                                       + std::to_string(loadCache()), zmqLogger::LOG_LEVELS::CACHE_FILE_IO);
+        }
     }
 
     void zmqClient::destroy()
     {
-        if(m_cacheToDisk)
+        if(m_cacheToDisk) {
             saveCache();
+        }
     }
 
     // -- Protected
@@ -93,7 +107,6 @@ namespace zmq_client
     void zmqClient::ClearCache()
     {
         m_cachedQueries.clear();
-
         // TODO: Should it also save over the cache on disk?
     }
 
@@ -104,19 +117,18 @@ namespace zmq_client
     void zmqClient::saveCache()
     {
         // Check that the location on disk exists. Create if it doesn't
-        if(!(boost::filesystem::exists(ZMQ_CACHE_LOCATION))){
-            if (boost::filesystem::create_directory(ZMQ_CACHE_LOCATION))
-                zmqLogger::Instance()->Log("Created zmq cache directory: " + ZMQ_CACHE_LOCATION);
+        if(!(boost::filesystem::exists(ZMQ_CACHE_LOCATION))) {
+            if (boost::filesystem::create_directory(ZMQ_CACHE_LOCATION)) {
+                zmqLogger::Instance()->Log(m_clientID + " resolver created zmq cache directory: " + ZMQ_CACHE_LOCATION);
+            }
         }
 
         std::fstream fs(m_cacheFilePath.c_str(), std::fstream::out | std::ios::binary);
-
         boost::archive::text_oarchive oarch(fs);
+//        boost::archive::binary_oarchive oarch(fs);
         oarch << m_cachedQueries;
-
         fs.close();
-
-        zmqLogger::Instance()->Log("Saved cache to " + m_cacheFilePath, zmqLogger::LOG_LEVELS::CACHE_FILE_IO);
+        zmqLogger::Instance()->Log(m_clientID + " resolver saved cache to " + m_cacheFilePath, zmqLogger::LOG_LEVELS::CACHE_FILE_IO);
     }
 
     bool zmqClient::loadCache()
@@ -125,17 +137,18 @@ namespace zmq_client
 
         if(!fs.is_open()) {
             // Error opening file
-            zmqLogger::Instance()->Log("No cache file present on disk.", zmqLogger::LOG_LEVELS::CACHE_FILE_IO);
+            zmqLogger::Instance()->Log(m_clientID + " resolver no cache file present on disk.", zmqLogger::LOG_LEVELS::CACHE_FILE_IO);
             return false;
         }
 
         boost::archive::text_iarchive iarch(fs);
+//        boost::archive::binary_iarchive iarch(fs);
         iarch >> m_cachedQueries;
 
         fs.close();
 
-        zmqLogger::Instance()->Log("Loaded cache from " + m_cacheFilePath, zmqLogger::LOG_LEVELS::CACHE_FILE_IO);
-        zmqLogger::Instance()->Log("Cache holds " + std::to_string(m_cachedQueries.size()) + " queries.", zmqLogger::LOG_LEVELS::CACHE_FILE_IO);
+        zmqLogger::Instance()->Log(m_clientID + " resolver loaded cache from " + m_cacheFilePath, zmqLogger::LOG_LEVELS::CACHE_FILE_IO);
+        zmqLogger::Instance()->Log(m_clientID + " resolver cache holds " + std::to_string(m_cachedQueries.size()) + " queries.", zmqLogger::LOG_LEVELS::CACHE_FILE_IO);
 
 
         return true;
@@ -153,7 +166,6 @@ namespace zmq_client
     
     std::string zmqClient::resolve_name(const std::string& a_path)
     {
-        //std::cout << "ALA USD Resolver - resolving name: " << a_path << "\n\n";
         const std::string parsed_path = this->parse_query(a_path);
         return parsed_path;
     }
@@ -181,12 +193,13 @@ namespace zmq_client
     {
         for(int i = 0; i < zmq_client::ZMQ_RETRIES; i++)
         {
-            if(i > 1)
-                zmqLogger::Instance()->Log("Parser had to retry: " + std::to_string(i), zmqLogger::LOG_LEVELS::DEFAULT);
-                //std::cout << zmqLogger::Instance()->LOG_PREFIX << "Parser had to retry: " << i <<  " | " << a_query << "\n\n\n";
+            if(i > 1) {
+                zmqLogger::Instance()->Log(m_clientID + " resolver parser had to retry: " + std::to_string(i),
+                                           zmqLogger::LOG_LEVELS::DEFAULT);
+            }
 
             if(m_useCache) {
-                zmqLogger::Instance()->Log("Searching cache for query: " + a_query, zmqLogger::LOG_LEVELS::CACHE_QUERIES);
+                zmqLogger::Instance()->Log(m_clientID + " resolver searching cache for query: " + a_query, zmqLogger::LOG_LEVELS::CACHE_QUERIES);
 
                 // Search for cached result
                 const std::map<std::string, zmq_client::zmqQueryCache>::iterator cached_result = m_cachedQueries.find(a_query);
@@ -197,18 +210,15 @@ namespace zmq_client
                     // If cache is still fresh
                     //if(std::time(0) - cached_result->second.timestamp <= zmq_client::ZMQ_CACHE_TIMEOUT)
                     
-                    zmqLogger::Instance()->Log("Received Cached response: " + cached_result->second.resolved_path, zmqLogger::LOG_LEVELS::CACHE_QUERIES);
+                    zmqLogger::Instance()->Log(m_clientID + " resolver received Cached response: " + cached_result->second.resolved_path, zmqLogger::LOG_LEVELS::CACHE_QUERIES);
                     return cached_result->second.resolved_path;
                 }
             }
 
             // Check socket status
-
             zmq::context_t m_context(1);
             zmq::socket_t m_socket(m_context, ZMQ_REQ);
-        
             m_socket.connect("tcp://" + zmq_client::ZMQ_SERVER + ":" + zmq_client::ZMQ_PORT);
-
             m_socket.setsockopt(ZMQ_LINGER, zmq_client::ZMQ_TIMEOUT);
             m_socket.setsockopt(ZMQ_RCVTIMEO, zmq_client::ZMQ_TIMEOUT);
 
@@ -227,33 +237,36 @@ namespace zmq_client
                 //There has been an error
                 const char* errmsg = zmq_strerror(errnum);
 
-                zmqLogger::Instance()->Log("ZMQ ERROR: " + std::to_string(errnum) + " : " + std::string(errmsg), zmqLogger::LOG_LEVELS::ZMQ_ERROR);
+                zmqLogger::Instance()->Log(m_clientID + " resolver ZMQ ERROR: " + std::to_string(errnum) + " : " + std::string(errmsg), zmqLogger::LOG_LEVELS::ZMQ_ERROR);
                 continue;
             }
         
             // Store the reply
             std::string realPath = std::string((char *)reply.data());
 
-            if(realPath != "NOT_FOUND")
-                if(realPath[0] != '/')
+            if(realPath != "NOT_FOUND") {
+                if (realPath[0] != '/') {
                     continue;
+                }
+            }
 
-            zmqLogger::Instance()->Log("Received Query Response: " + a_query + " | " + realPath, zmqLogger::LOG_LEVELS::ZMQ_QUERIES); 
+            zmqLogger::Instance()->Log(m_clientID + " resolver received query response: " + a_query + " | " + realPath, zmqLogger::LOG_LEVELS::ZMQ_QUERIES);
 
             if(m_useCache) {
                 // Cache reply
                 zmqQueryCache cache = {realPath, std::time(0)};
-                
                 m_cachedQueries.insert(std::make_pair(a_query, cache));
             }
 
             m_socket.close();
             m_context.close();
-
             return realPath;
         }
 
-        zmqLogger::Instance()->Log("Unable to query after " + std::to_string(zmq_client::ZMQ_RETRIES) + " retries.", zmqLogger::LOG_LEVELS::ZMQ_ERROR);
+        zmqLogger::Instance()->Log(m_clientID + " resolver unable to query after "
+                                   + std::to_string(zmq_client::ZMQ_RETRIES)
+                                   + " retries.", zmqLogger::LOG_LEVELS::ZMQ_ERROR);
+
         return "Unable to parse query";
     }
 }
