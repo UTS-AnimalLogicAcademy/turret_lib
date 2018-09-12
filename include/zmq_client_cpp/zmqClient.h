@@ -15,7 +15,6 @@ namespace zmq_client
     const std::string ZMQ_SERVER = "localhost";
     const std::string ZMQ_PORT = "5555";
 
-
     const int ZMQ_TIMEOUT = 60000;
     const int ZMQ_RETRIES = 50;
 
@@ -73,6 +72,7 @@ namespace zmq_client
             bool m_cacheToDisk;
 
             std::string m_clientID;
+            std::string m_sessionID;
             std::string m_cacheFilePath;
 
             //<Tank_Query, Cache_Result>

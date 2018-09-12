@@ -4,8 +4,7 @@
 namespace zmq_client 
 {
     // -- Private
-
-    std::string zmqLogger::m_prefix = "ZMQ Resolver";
+    std::string zmqLogger::m_prefix = "Turret";
     int zmqLogger::m_logLevel = zmqLogger::ZMQ_INTERNAL;
     bool zmqLogger::m_logEnabled = true;
 
@@ -37,8 +36,6 @@ namespace zmq_client
         if(const char* env_p = std::getenv("DEBUG_ENABLED"))
             m_logEnabled = (atoi(env_p) == 1) ? true : false;
     }
-
-    void zmqLogger::SetPrefix(const std::string& a_prefix) { m_prefix = a_prefix; }
 
     void zmqLogger::EnableLog()
     {

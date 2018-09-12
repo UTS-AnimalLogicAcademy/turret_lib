@@ -9,7 +9,6 @@ namespace zmq_client
         static std::string m_prefix;
         static int m_logLevel;
         static bool m_logEnabled;
-        
         static std::mutex& getMutex();
 
         private:
@@ -22,8 +21,6 @@ namespace zmq_client
             static zmqLogger* Instance();
 
             void Setup();
-
-            void SetPrefix(const std::string& a_prefix);
 
             void EnableLog();
             void DisableLog();
