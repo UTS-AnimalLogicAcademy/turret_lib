@@ -80,7 +80,9 @@ namespace zmq_client
         // a cache filepath override was specified by env var:
         if(const char* env_p = std::getenv((clientIDUppercase + "_CACHE_LOCATION").c_str())) {
             m_cacheFilePath = env_p;
+            m_cacheToDisk = false;
         }
+
         // determine cache filepath by variables:
         else {
             m_cacheFilePath = ZMQ_CACHE_LOCATION + m_clientID + "_" + m_sessionID + ZMQ_CACHE_FILETYPE;
