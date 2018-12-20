@@ -6,7 +6,7 @@
 
 #include <boost/serialization/serialization.hpp>
 
-namespace zmq_client
+namespace turret_client
 {
 
     const std::string TANK_PREFIX = "tank://";
@@ -24,7 +24,7 @@ namespace zmq_client
     const std::string ZMQ_CACHE_LOCATION = "/usr/tmp/zmq/";
     const std::string ZMQ_CACHE_FILETYPE = ".zmqcache";
 
-    struct zmqQueryCache {
+    struct turretQueryCache {
         std::string resolved_path;
         std::time_t timestamp;
 
@@ -38,11 +38,11 @@ namespace zmq_client
             }
     };
 
-    class zmqClient {
+    class turretClient {
         public:
-            zmqClient();
-            zmqClient(const char* a_clientID);
-            ~zmqClient();
+            turretClient();
+            turretClient(const char* a_clientID);
+            ~turretClient();
 
             std::string resolve_name(const std::string& a_path);
             bool resolve_exists(const std::string& a_path);
@@ -76,6 +76,6 @@ namespace zmq_client
             std::string m_cacheFilePath;
 
             //<Tank_Query, Cache_Result>
-            std::map<std::string, zmqQueryCache> m_cachedQueries;
+            std::map<std::string, turretQueryCache> m_cachedQueries;
     };
 }

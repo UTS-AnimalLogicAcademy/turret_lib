@@ -8,7 +8,8 @@ authors = [ 'ben.skinner',
             'daniel.flood'
           ]
 
-requires = ['libzmq',
+requires = ['libzmq-4',
+            'cppzmq-4',
             'boost-1.55'
            ]
 
@@ -19,6 +20,5 @@ build_requires = [
 variants = [['platform-linux', 'arch-x86_64']]
 
 def commands():
-    env.TURRET_CLIENT_INCLUDE.set("{root}/include")
-    env.TURRET_CLIENT_LIB.set("{root}/lib")
+    env.LIBTURRET_ROOT.set("{this.root}")
     env.LD_LIBRARY_PATH.append('{root}/lib')

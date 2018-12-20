@@ -2,23 +2,23 @@
 #include <mutex>
 #include <atomic>
 
-namespace zmq_client 
+namespace turret_client
 {
 
-    class zmqLogger {
+    class turretLogger {
         static std::string m_prefix;
         static int m_logLevel;
         static bool m_logEnabled;
         static std::mutex& getMutex();
 
         private:
-            zmqLogger() { Setup(); }
-            static std::atomic<zmqLogger*> m_instance;
+            turretLogger() { Setup(); }
+            static std::atomic<turretLogger*> m_instance;
             static std::mutex m_mutex;
 
         public:
 
-            static zmqLogger* Instance();
+            static turretLogger* Instance();
 
             void Setup();
 
