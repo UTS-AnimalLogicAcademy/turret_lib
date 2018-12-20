@@ -1,58 +1,51 @@
-#include "zmqLogger.h"
+#include "turretLogger.h"
 #include <stdlib.h>
 
-namespace zmq_client 
-{
+namespace turret_client {
     // -- Private
-    std::string zmqLogger::m_prefix = "Turret";
-    int zmqLogger::m_logLevel = zmqLogger::ZMQ_INTERNAL;
-    bool zmqLogger::m_logEnabled = true;
+    std::string turretLogger::m_prefix = "Turret";
+    int turretLogger::m_logLevel = turretLogger::ZMQ_INTERNAL;
+    bool turretLogger::m_logEnabled = true;
 
-    std::mutex& zmqLogger::getMutex() { 
+    std::mutex& turretLogger::getMutex() { 
         static std::mutex m;
         return m;
     }
 
-    std::atomic<zmqLogger*> zmqLogger::m_instance { nullptr };
-    std::mutex zmqLogger::m_mutex;
+    std::atomic<turretLogger*> turretLogger::m_instance { nullptr };
+    std::mutex turretLogger::m_mutex;
 
     // -- Public
-
-    zmqLogger* zmqLogger::Instance()
-    {
+    turretLogger* turretLogger::Instance() {
         if(m_instance == nullptr) {
             std::lock_guard<std::mutex> lock(m_mutex);
             if(m_instance == nullptr) {
-                m_instance = new zmqLogger();
+                m_instance = new turretLogger();
             }
         }
         return m_instance;
     }
 
-    void zmqLogger::Setup()
-    {
+    void turretLogger::Setup() {
         if(const char* env_p = std::getenv("DEBUG_LOG_LEVEL"))
             m_logLevel = atoi(env_p);
         if(const char* env_p = std::getenv("DEBUG_ENABLED"))
             m_logEnabled = (atoi(env_p) == 1) ? true : false;
     }
 
-    void zmqLogger::EnableLog()
-    {
+    void turretLogger::EnableLog() {
         m_logEnabled = true;
     }
 
-    void zmqLogger::DisableLog() 
-    {
+    void turretLogger::DisableLog() {
         m_logEnabled = false;
     }
 
-    void zmqLogger::SetLogEnabled(const bool& a_enabled) 
-    {
+    void turretLogger::SetLogEnabled(const bool& a_enabled) {
         m_logEnabled = a_enabled;
     }
 
-    void zmqLogger::Log(const std::string& a_msg, const int a_logLevel) {
+    void turretLogger::Log(const std::string& a_msg, const int a_logLevel) {
         if(m_logEnabled) {
             std::lock_guard<std::mutex> _(getMutex());
             if(a_logLevel >= m_logLevel) {
