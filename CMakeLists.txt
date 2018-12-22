@@ -1,14 +1,11 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.2)
 
 set (CMAKE_CXX_STANDARD 11)
 
 set(CMAKE_MODULE_PATH
         ${CMAKE_MODULE_PATH}
-        "/mnt/ala/software/pipeline/cmake/modules/rez"
         ${CMAKE_SOURCE_DIR}/cmake/modules
         )
-
-include(RezBuild)
 
 project(turret_lib)
 
@@ -35,15 +32,10 @@ target_include_directories(turret PRIVATE
 
 install(TARGETS turret DESTINATION lib/)
 
+file(GLOB_RECURSE inc_files "include/*")
+install(FILES ${inc_files} DESTINATION include)
+
 target_link_libraries(turret
         ${ZeroMQ_LIBRARY}
         ${Boost_LIBRARIES}
         )
-
-file(GLOB_RECURSE inc_files "include/*")
-rez_install_files(
-        ${inc_files}
-        DESTINATION .
-        EXECUTABLE
-        LOCAL_SYMLINK
-)
