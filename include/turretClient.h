@@ -1,3 +1,21 @@
+//
+// Copyright 2019 University of Technology, Sydney
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+// documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+// to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+//   * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+//     the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+// THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+
 #pragma once
 
 #include <string>
@@ -8,7 +26,6 @@
 
 namespace turret_client
 {
-
     const std::string TANK_PREFIX = "tank://";
     const std::string TANK_PREFIX_SHORT = "tank:";
 
@@ -18,11 +35,8 @@ namespace turret_client
     const int ZMQ_TIMEOUT = 60000;
     const int ZMQ_RETRIES = 50;
 
-    const bool ZMQ_CACHE_QUERIES = true;
-    const bool ZMQ_CACHE_EXTERNAL = false;
-    const double ZMQ_CACHE_TIMEOUT = 100.0;
-    const std::string ZMQ_CACHE_LOCATION = "/usr/tmp/zmq/";
-    const std::string ZMQ_CACHE_FILETYPE = ".zmqcache";
+    const std::string TURRET_CACHE_DIR = "/usr/tmp/turret/";
+    const std::string TURRET_CACHE_EXT = ".turretcache";
 
     struct turretQueryCache {
         std::string resolved_path;
@@ -43,39 +57,24 @@ namespace turret_client
             turretClient();
             turretClient(const char* a_clientID);
             ~turretClient();
-
             std::string resolve_name(const std::string& a_path);
             bool resolve_exists(const std::string& a_path);
             bool matches_schema(const std::string& a_path);
-        
-            void SetUseCache(const bool& a_useCache) { m_useCache = a_useCache; }
-            bool GetUseCache() { return m_useCache; }
-
             void SetClientID(const char* a_clientID) { m_clientID = std::string(a_clientID); }
             const char* GetClientID() { return m_clientID.c_str(); }
-
-            void ClearCache();
 
         protected:
             void setup();
             void destroy();
-
-        protected:
             std::string parse_query(const std::string& a_query);
-
             void saveCache();
             bool loadCache();
             void appendCache();
-
-        protected:
-            bool m_useCache;
-            bool m_cacheToDisk;
-
-            std::string m_clientID;
-            std::string m_sessionID;
+            std::string m_clientID; // set by constructor
+            bool m_cacheToDisk; // set by env var $TURRET_CACHE_TO_DISK=1, default is false
+            bool m_resolveFromFileCache; // set by env var $TURRET_CLIENTID_CACHE_LOCATION=/path/to/cache
+            std::string m_sessionID; // set by $TURRET_SESSION_ID=uuid
             std::string m_cacheFilePath;
-
-            //<Tank_Query, Cache_Result>
             std::map<std::string, turretQueryCache> m_cachedQueries;
     };
 }
