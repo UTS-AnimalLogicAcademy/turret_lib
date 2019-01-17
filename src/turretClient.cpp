@@ -201,16 +201,20 @@ namespace turret_client
 
         fs.close();
 
-//        turretLogger::Instance()->Log(m_clientID + " resolver loaded cache from "
-//                                      + m_cacheFilePath, turretLogger::LOG_LEVELS::CACHE_FILE_IO);
-//
-//        turretLogger::Instance()->Log(m_clientID + " resolver cache holds " + std::to_string(m_cachedQueries.size())
-//                                      + " queries.", turretLogger::LOG_LEVELS::CACHE_FILE_IO);
-
         return true;
     }
 
     std::string turretClient::parse_query(const std::string& a_query) {
+
+        std::string query = a_query;
+
+        const char *env = std::getenv("TURRET_PLATFORM_ID");
+        if (env) {
+            std::string platform = std::string(env);
+            if(!platform.empty()) {
+                query += "&platform=" + platform;
+            }
+        }
 
         for(int i = 0; i < turret_client::ZMQ_RETRIES; i++) {
             if(i > 1) {
@@ -218,29 +222,20 @@ namespace turret_client
                                            turretLogger::LOG_LEVELS::DEFAULT);
             }
 
-//            if (m_resolveFromFileCache == false) {
-//                turretLogger::Instance()->Log(m_clientID + " resolver searching cache for query: " + a_query,
-//                                              turretLogger::LOG_LEVELS::ZMQ_QUERIES);
-//            }
-
             // Search for cached result
-            const std::map<std::string, turret_client::turretQueryCache>::iterator cached_result = m_cachedQueries.find(a_query);
+            const std::map<std::string, turret_client::turretQueryCache>::iterator cached_result = m_cachedQueries.find(query);
 
             if (cached_result != m_cachedQueries.end()) {
 
                 // If resolving from a disk cache, don't log resolved paths, as they are already declared in the cache
                 if (m_resolveFromFileCache == false) {
                     turretLogger::Instance()->Log(m_clientID + " resolver received cached response: "
-                                                  + cached_result->second.resolved_path + " for query: " + a_query
+                                                  + cached_result->second.resolved_path + " for query: " + query
                                                   + "\n", turretLogger::LOG_LEVELS::ZMQ_QUERIES);
                 }
 
                 return cached_result->second.resolved_path;
             }
-//            else{
-//                turretLogger::Instance()->Log(m_clientID + " resolver found no cached result for query: "
-//                                              + a_query, turretLogger::LOG_LEVELS::ZMQ_QUERIES);
-//            }
 
             // If m_liveResolve is false, we do not allow any live resolves:
             if (m_resolveFromFileCache == true) {
@@ -256,7 +251,7 @@ namespace turret_client
             m_socket.setsockopt(ZMQ_RCVTIMEO, turret_client::ZMQ_TIMEOUT);
 
             // Create zmq request
-            zmq::message_t request(a_query.c_str(), a_query.length());
+            zmq::message_t request(query.c_str(), query.length());
             
             // Send zmq request
             m_socket.send(request/* , ZMQ_NOBLOCK */);
@@ -286,14 +281,11 @@ namespace turret_client
             // Cache the reply
             turretQueryCache cache = {realPath, std::time(0)};
             // insert will not add duplicate keys
-            m_cachedQueries.insert(std::make_pair(a_query, cache));
+            m_cachedQueries.insert(std::make_pair(query, cache));
 
             turretLogger::Instance()->Log(m_clientID + " resolver received live response: "
-                                          + realPath + " for query: " + a_query + "\n",
+                                          + realPath + " for query: " + query + "\n",
                                           turretLogger::LOG_LEVELS::ZMQ_QUERIES);
-
-//            turretLogger::Instance()->Log(m_clientID + " adding result to cache: "
-//                                          + realPath, turretLogger::LOG_LEVELS::ZMQ_QUERIES);
 
             m_socket.close();
             m_context.close();
