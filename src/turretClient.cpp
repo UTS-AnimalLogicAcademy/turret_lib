@@ -124,21 +124,21 @@ namespace turret_client
 
 	// Initialize server settings
 	
-	if (const char* serverIP = std::getenv("TURRET_SERVER_IP")) { 
-	    m_serverIP = serverIP; 
-	}
+        if (const char* serverIP = std::getenv("TURRET_SERVER_IP")) { 
+            m_serverIP = serverIP; 
+        }
 
-	if (const char* serverPort = std::getenv("TURRET_SERVER_PORT")) { 
-	    m_serverPort = serverPort; 
-	}
+        if (const char* serverPort = std::getenv("TURRET_SERVER_PORT")) { 
+            m_serverPort = serverPort; 
+        }
 
-	if (const int timeout = std::stoi(std::getenv("TURRET_TIMEOUT"))) { 
-	    m_timeout = timeout; 
-	}
+        if (const char* timeout = std::getenv("TURRET_TIMEOUT")) { 
+            m_timeout = std::stoi(timeout); 
+        }
 
-	if (const int retries = std::stoi(std::getenv("TURRET_RETRIES"))) { 
-	    m_retries = retries; 
-	}
+        if (const char* retries = std::getenv("TURRET_RETRIES")) { 
+            m_retries = std::stoi(retries); 
+        }
 
         // Check if a disk cache location is provided by env var.  If it is, the client
         // will load previously resolved values from it:
