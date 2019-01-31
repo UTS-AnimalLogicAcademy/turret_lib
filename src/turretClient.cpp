@@ -68,6 +68,10 @@ namespace turret_client
     turretClient::turretClient() :
         m_cacheToDisk(false),
         m_clientID("default"),
+        m_serverIP(turret_client::DEFAULT_ZMQ_SERVER),
+        m_serverPort(turret_client::DEFAULT_ZMQ_PORT),
+        m_timeout(turret_client::DEFAULT_ZMQ_TIMEOUT),
+        m_retries(turret_client::DEFAULT_ZMQ_RETRIES),
         m_resolveFromFileCache(false),
         m_cacheFilePath("") {
         setup();
@@ -76,6 +80,10 @@ namespace turret_client
     turretClient::turretClient(const char* a_clientID) : 
         m_cacheToDisk(false),
         m_clientID(a_clientID),
+        m_serverIP(turret_client::DEFAULT_ZMQ_SERVER),
+        m_serverPort(turret_client::DEFAULT_ZMQ_PORT),
+        m_timeout(turret_client::DEFAULT_ZMQ_TIMEOUT),
+        m_retries(turret_client::DEFAULT_ZMQ_RETRIES),
         m_resolveFromFileCache(false),
         m_cacheFilePath("") {
         setup();
@@ -104,15 +112,33 @@ namespace turret_client
     }
     // -- End Public
 
-    // --Protected
+    // -- Protected
     void turretClient::setup() {
         std::string clientIDUppercase = m_clientID;
         std::transform(clientIDUppercase.begin(), clientIDUppercase.end(),clientIDUppercase.begin(), ::toupper);
 
-        // the session_id is set by the DCC app on scene load/new scene
+        // The session_id is set by the DCC app on scene load/new scene
         if (const char* sessionID = std::getenv("TURRET_SESSION_ID")) {
             m_sessionID = sessionID;
         }
+
+	// Initialize server settings
+	
+	if (const char* serverIP = std::getenv("TURRET_SERVER_IP")) { 
+	    m_serverIP = serverIP; 
+	}
+
+	if (const char* serverPort = std::getenv("TURRET_SERVER_PORT")) { 
+	    m_serverPort = serverPort; 
+	}
+
+	if (const int timeout = std::stoi(std::getenv("TURRET_TIMEOUT"))) { 
+	    m_timeout = timeout; 
+	}
+
+	if (const int retries = std::stoi(std::getenv("TURRET_RETRIES"))) { 
+	    m_retries = retries; 
+	}
 
         // Check if a disk cache location is provided by env var.  If it is, the client
         // will load previously resolved values from it:
@@ -216,7 +242,7 @@ namespace turret_client
             }
         }
 
-        for(int i = 0; i < turret_client::ZMQ_RETRIES; i++) {
+        for(int i = 0; i < m_retries; i++) {
             if(i > 1) {
                 turretLogger::Instance()->Log(m_clientID + " resolver parser had to retry: " + std::to_string(i),
                                            turretLogger::LOG_LEVELS::DEFAULT);
@@ -246,9 +272,9 @@ namespace turret_client
             // Check socket status
             zmq::context_t m_context(1);
             zmq::socket_t m_socket(m_context, ZMQ_REQ);
-            m_socket.connect("tcp://" + turret_client::ZMQ_SERVER + ":" + turret_client::ZMQ_PORT);
-            m_socket.setsockopt(ZMQ_LINGER, turret_client::ZMQ_TIMEOUT);
-            m_socket.setsockopt(ZMQ_RCVTIMEO, turret_client::ZMQ_TIMEOUT);
+            m_socket.connect("tcp://" + m_serverIP + ":" + m_serverPort);
+            m_socket.setsockopt(ZMQ_LINGER, m_timeout);
+            m_socket.setsockopt(ZMQ_RCVTIMEO, m_timeout);
 
             // Create zmq request
             zmq::message_t request(query.c_str(), query.length());
@@ -272,11 +298,8 @@ namespace turret_client
         
             // Store the reply
             std::string realPath = std::string((char *)reply.data());
-            if(realPath != "NOT_FOUND") {
-                if (realPath[0] != '/') {
-                    continue;
-                }
-            }
+
+            if(realPath == "NOT_FOUND") continue;
 
             // Cache the reply
             turretQueryCache cache = {realPath, std::time(0)};
@@ -293,7 +316,7 @@ namespace turret_client
         }
 
         turretLogger::Instance()->Log(m_clientID + " resolver unable to query after "
-                                   + std::to_string(turret_client::ZMQ_RETRIES)
+                                   + std::to_string(m_retries)
                                    + " retries.", turretLogger::LOG_LEVELS::ZMQ_ERROR);
 
         return "Unable to parse query";
