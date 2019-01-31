@@ -40,6 +40,11 @@ make install
 
 ### Windows
 
+Requirements
+
+ *  <https://github.com/zeromq/libzmq>
+ *  <https://github.com/zeromq/cppzmq>
+
 ```
 mkdir build
 cd build
