@@ -29,11 +29,11 @@ namespace turret_client
     const std::string TANK_PREFIX = "tank://";
     const std::string TANK_PREFIX_SHORT = "tank:";
 
-    const std::string ZMQ_SERVER = "localhost";
-    const std::string ZMQ_PORT = "5555";
+    const std::string DEFAULT_ZMQ_SERVER = "localhost";
+    const std::string DEFAULT_ZMQ_PORT = "5555";
 
-    const int ZMQ_TIMEOUT = 60000;
-    const int ZMQ_RETRIES = 50;
+    const int DEFAULT_ZMQ_TIMEOUT = 60000;
+    const int DEFAULT_ZMQ_RETRIES = 50;
 
     const std::string TURRET_CACHE_DIR = "/usr/tmp/turret/";
     const std::string TURRET_CACHE_EXT = ".turretcache";
@@ -71,6 +71,10 @@ namespace turret_client
             bool loadCache();
             void appendCache();
             std::string m_clientID; // set by constructor
+            std::string m_serverIP;
+            std::string m_serverPort;
+            int m_timeout;
+            int m_retries;
             bool m_cacheToDisk; // set by env var $TURRET_CACHE_TO_DISK=1, default is false
             bool m_resolveFromFileCache; // set by env var $TURRET_CLIENTID_CACHE_LOCATION=/path/to/cache
             std::string m_sessionID; // set by $TURRET_SESSION_ID=uuid

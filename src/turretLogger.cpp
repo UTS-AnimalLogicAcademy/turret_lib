@@ -22,7 +22,7 @@
 namespace turret_client {
     // -- Private
     std::string turretLogger::m_prefix = "Turret";
-    int turretLogger::m_logLevel = turretLogger::ZMQ_INTERNAL;
+    int turretLogger::m_logLevel = turretLogger::DEFAULT;
     bool turretLogger::m_logEnabled = true;
 
     std::mutex& turretLogger::getMutex() { 
@@ -35,9 +35,9 @@ namespace turret_client {
 
     // -- Public
     turretLogger* turretLogger::Instance() {
-        if(m_instance == nullptr) {
+        if(&m_instance == nullptr) {
             std::lock_guard<std::mutex> lock(m_mutex);
-            if(m_instance == nullptr) {
+            if(&m_instance == nullptr) {
                 m_instance = new turretLogger();
             }
         }
@@ -67,7 +67,7 @@ namespace turret_client {
         if(m_logEnabled) {
             std::lock_guard<std::mutex> _(getMutex());
             if(a_logLevel >= m_logLevel) {
-                std::cout << "[" << m_prefix << "] " << a_msg << std::endl;
+                std::cout << "[" << m_prefix.c_str() << "] " << a_msg.c_str() << std::endl;
             }
         }
     }
