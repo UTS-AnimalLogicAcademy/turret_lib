@@ -122,22 +122,26 @@ namespace turret_client
             m_sessionID = sessionID;
         }
 
-	// Initialize server settings
+	    // Initialize server settings
 	
         if (const char* serverIP = std::getenv("TURRET_SERVER_IP")) { 
             m_serverIP = serverIP; 
+            turretLogger::Instance()->Log("Turret will use value from 'TURRET_SERVER_IP' environment variable for server IP: " + std::string(m_serverIP), turretLogger::LOG_LEVELS::ZMQ_QUERIES);
         }
 
         if (const char* serverPort = std::getenv("TURRET_SERVER_PORT")) { 
             m_serverPort = serverPort; 
+            turretLogger::Instance()->Log("Turret will use value from 'TURRET_SERVER_PORT' environment variable for server Port: " + std::string(m_serverPort), turretLogger::LOG_LEVELS::ZMQ_QUERIES);
         }
 
         if (const char* timeout = std::getenv("TURRET_TIMEOUT")) { 
             m_timeout = std::stoi(timeout); 
+            turretLogger::Instance()->Log("Turret will use value from 'TURRET_TIMEOUT' environment variable for timeout: " + std::to_string(m_timeout), turretLogger::LOG_LEVELS::ZMQ_QUERIES);
         }
 
         if (const char* retries = std::getenv("TURRET_RETRIES")) { 
-            m_retries = std::stoi(retries); 
+            m_retries = std::stoi(retries);
+            turretLogger::Instance()->Log("Turret will use value from 'TURRET_RETRIES' environment variable for retries: " + std::to_string(m_retries), turretLogger::LOG_LEVELS::ZMQ_QUERIES); 
         }
 
         // Check if a disk cache location is provided by env var.  If it is, the client
