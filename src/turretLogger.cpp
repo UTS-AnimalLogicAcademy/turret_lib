@@ -22,7 +22,7 @@
 namespace turret_client {
     // -- Private
     std::string turretLogger::m_prefix = "Turret";
-    int turretLogger::m_logLevel = turretLogger::ZMQ_INTERNAL;
+    int turretLogger::m_logLevel = turretLogger::DEFAULT;
     bool turretLogger::m_logEnabled = true;
 
     std::mutex& turretLogger::getMutex() { 
