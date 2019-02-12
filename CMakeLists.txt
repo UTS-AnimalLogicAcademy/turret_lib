@@ -20,9 +20,9 @@ add_library(turret SHARED
 
 find_package(ZeroMQ REQUIRED)
 
-if(MSVC)
+if(WIN32)
         add_definitions( -DBOOST_ALL_NO_LIB )
-endif(MSVC)
+endif(WIN32)
 
 find_package(Boost
         COMPONENTS
