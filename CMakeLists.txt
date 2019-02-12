@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.2)
 
 set (CMAKE_CXX_STANDARD 11)
 
+if(WIN32)
+        set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif(WIN32)
+
 set(CMAKE_MODULE_PATH
         ${CMAKE_MODULE_PATH}
         ${CMAKE_SOURCE_DIR}/cmake/modules
@@ -15,6 +19,10 @@ add_library(turret SHARED
         )
 
 find_package(ZeroMQ REQUIRED)
+
+if(WIN32)
+        add_definitions( -DBOOST_ALL_NO_LIB )
+endif(WIN32)
 
 find_package(Boost
         COMPONENTS
