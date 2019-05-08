@@ -2,7 +2,7 @@
 
 name = 'turret_lib'
 
-version = '0.0.3'
+version = '0.0.4'
 
 authors = [ 'ben.skinner',
             'daniel.flood'
@@ -22,3 +22,4 @@ variants = [['platform-linux', 'arch-x86_64']]
 def commands():
     env.LIBTURRET_ROOT.set("{this.root}")
     env.LD_LIBRARY_PATH.append('{root}/lib')
+    env.TURRET_RETRIES.set("5")
