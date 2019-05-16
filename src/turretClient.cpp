@@ -31,6 +31,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <stdlib.h>
 
 #include <sys/stat.h>
 
@@ -152,7 +153,7 @@ namespace turret_client
                                           + std::string(cache_location),
                                           turretLogger::LOG_LEVELS::ZMQ_QUERIES);
 
-            // set m_liveResolve to false, which will block non-cached queries
+            // set m_resolveFromFileCache to true, which will block non-cached queries
             m_resolveFromFileCache = true;
             m_cacheFilePath = cache_location;
 
@@ -236,10 +237,8 @@ namespace turret_client
 
     std::string turretClient::parse_query(const std::string& a_query) {
 
-        // If m_resolveFromFileCache is true, we do not allow any live resolves:
-        if (m_resolveFromFileCache == true) {
-            return "uncached_query";
-        }
+//        turretLogger::Instance()->Log(m_clientID + " parsing query..." + a_query,
+//                                      turretLogger::LOG_LEVELS::DEFAULT);
 
         std::string query = a_query;
 
@@ -270,6 +269,11 @@ namespace turret_client
                 }
 
                 return cached_result->second.resolved_path;
+            }
+
+            // If m_resolveFromFileCache is true, we do not allow any live resolves:
+            if (m_resolveFromFileCache == true) {
+                return "uncached_query";
             }
 
             // Perform live resolve
