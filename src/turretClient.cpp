@@ -236,6 +236,11 @@ namespace turret_client
 
     std::string turretClient::parse_query(const std::string& a_query) {
 
+        // If m_resolveFromFileCache is true, we do not allow any live resolves:
+        if (m_resolveFromFileCache == true) {
+            return "uncached_query";
+        }
+
         std::string query = a_query;
 
         const char *env = std::getenv("TURRET_PLATFORM_ID");
@@ -258,7 +263,7 @@ namespace turret_client
             if (cached_result != m_cachedQueries.end()) {
 
                 // If resolving from a disk cache, don't log resolved paths, as they are already declared in the cache
-                if (m_resolveFromFileCache == false) {
+                if (m_resolveFromFileCache == true) {
                     turretLogger::Instance()->Log(m_clientID + " resolver received cached response: "
                                                   + cached_result->second.resolved_path + " for query: " + query
                                                   + "\n", turretLogger::LOG_LEVELS::ZMQ_QUERIES);
@@ -267,10 +272,6 @@ namespace turret_client
                 return cached_result->second.resolved_path;
             }
 
-            // If m_liveResolve is false, we do not allow any live resolves:
-            if (m_resolveFromFileCache == true) {
-                return "uncached_query";
-            }
             // Perform live resolve
 
             // Check socket status
