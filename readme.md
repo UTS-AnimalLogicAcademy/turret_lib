@@ -16,13 +16,13 @@ Path:`/mnt/ala/mav/2018/jobs/s118/assets/setPiece/building01/model/model/caches/
 
 Turret allows some basic settings to be overriden via environment variables
 
- * TURRET\_SESSION\_ID
- * TURRET\_SERVER\_IP
- * TURRET\_SERVER\_PORT
- * TURRET\_TIMEOUT
- * TURRET\_RETRIES
- * DEBUG\_LOG\_LEVEL
- * DEBUG\_ENABLED
+ * `TURRET_SESSION_ID`
+ * `TURRET_SERVER_IP`
+ * `TURRET_SERVER_PORT`
+ * `TURRET_TIMEOUT`
+ * `TURRET_RETRIES`
+ * `DEBUG_LOG_LEVEL`
+ * `DEBUG_ENABLED`
 
 ## Contributing
 We use turret across almost every aspect of our USD pipeline and are constantly fixing bugs and finding time to improve turret more and more. We are however, very open to external pull-requests, and growing turret into a more versatile and robust piece of software with your help. Feel free to get in contact directly or through these GitHub repos. We'd love to talk! 
