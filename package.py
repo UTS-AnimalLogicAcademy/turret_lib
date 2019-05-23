@@ -2,16 +2,16 @@
 
 name = 'turret_lib'
 
-version = '0.0.6'
+version = '0.0.7'
 
 authors = [ 'ben.skinner',
             'daniel.flood'
-          ]
+]
 
 requires = ['libzmq-4',
             'cppzmq-4',
             'boost-1.55'
-           ]
+]
 
 build_requires = [
     'cmake-3.2',

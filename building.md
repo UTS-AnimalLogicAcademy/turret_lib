@@ -1,7 +1,9 @@
 # Building Turret-Lib
 At present, Linux is our primary supported build platform. There is now basic windows support but is not our primary focus.
 
-## Requirements
+## Building
+
+### Requirements
 * libzmq-4.2.3
 * cppzmq-4.3.0
 * boost-1.55
@@ -9,10 +11,7 @@ At present, Linux is our primary supported build platform. There is now basic wi
 
 Other versions may work but are untested.  
 
-## Building
-
 This repository includes a modified FindZeroMQ.cmake module, which finds the libzmq headers and libraries, as well as setting a cmake variable CPPZMQ_INCLUDE_DIRS based on an environment variable $CPPZMQ_INCLUDE.  This locates cppzmq headers such as zmq.hpp.  Setting this environment variable is the easiest way to set everything up.  This repo also uses the cmake standard FindBoost.cmake module.  
-
 
 ### Linux
 
@@ -56,7 +55,6 @@ SET LIBZMQ_LIB_DIR=C:/install/path/libzmq-v140-mt-4_3_2.lib
 cmake -DCMAKE_INSTALL_PREFIX="C:/install/path" -G "Visual Studio 14 2015 Win64" ..
 cmake --build . --config Release --target install -- /M:16
 ```
-
 
 #### Notes
 

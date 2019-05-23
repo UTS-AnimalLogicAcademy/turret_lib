@@ -1,8 +1,8 @@
-# Turret-Lib
+# turret_lib
 
-This library, **turret-lib**, provides a turretClient and turretLogger class, which communicate with a **turret-server**, and can be included in any c++ plugin which needs to resolve shotgun tank uris.  
+This library, **turret_lib**, provides a turretClient and turretLogger class, which communicate with a **turret-server**, and can be included in any c++ plugin which needs to resolve shotgun tank uris.  
 
-UTSALA provides two example projects which use turret-lib: turret-usd and turref-klf (katana).  
+UTSALA provides two example projects which use **turret_lib**: turret_usd and turref_klf (katana).  
 
 ### Examples
 

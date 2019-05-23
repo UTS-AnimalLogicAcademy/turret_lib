@@ -157,10 +157,6 @@ namespace turret_client
             m_resolveFromFileCache = true;
             m_cacheFilePath = cache_location;
 
-//            turretLogger::Instance()->Log(m_clientID + " resolver loading cache: "
-//                                        + std::to_string(loadCache()), turretLogger::LOG_LEVELS::CACHE_FILE_IO);
-//                                          + std::string(cache_location), turretLogger::LOG_LEVELS::ZMQ_QUERIES);
-
             loadCache();
         }
 
@@ -236,9 +232,6 @@ namespace turret_client
     }
 
     std::string turretClient::parse_query(const std::string& a_query) {
-
-//        turretLogger::Instance()->Log(m_clientID + " parsing query..." + a_query,
-//                                      turretLogger::LOG_LEVELS::DEFAULT);
 
         std::string query = a_query;
 
