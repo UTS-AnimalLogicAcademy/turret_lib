@@ -74,6 +74,7 @@ namespace turret_client
         m_timeout(turret_client::DEFAULT_ZMQ_TIMEOUT),
         m_retries(turret_client::DEFAULT_ZMQ_RETRIES),
         m_resolveFromFileCache(false),
+        m_allowLiveResolves(true),
         m_cacheFilePath("") {
         setup();
     }
@@ -145,23 +146,53 @@ namespace turret_client
             turretLogger::Instance()->Log("Turret will use value from 'TURRET_RETRIES' environment variable for retries: " + std::to_string(m_retries), turretLogger::LOG_LEVELS::DEFAULT); 
         }
 
+        // use env var value to determine whether live resolves are allowed
+        if (const char* allowLiveResolves = std::getenv("TURRET_ALLOW_LIVE_RESOLVES")) {
+            m_allowLiveResolves = std::stoi(allowLiveResolves);
+
+            if (m_allowLiveResolves){
+                turretLogger::Instance()->Log("Turret will allow live resolves");
+            }
+            else{
+                turretLogger::Instance()->Log("Turret will disable live resolves");
+            }
+
+//            turretLogger::Instance()->Log("Turret will allow live resolves" + std::to_string(m_allowLiveResolves));
+        }
+        // default - live resolves are allowed
+        else{
+            turretLogger::Instance()->Log("$TURRET_ALLOW_LIVE_RESOLVES not set, turret will default to allowing live resolves");
+            m_allowLiveResolves = true;
+        }
+
+
         // Check if a disk cache location is provided by env var.  If it is, the client
         // will load previously resolved values from it:
         if(const char* cache_location = std::getenv(("TURRET_" + clientIDUppercase + "_CACHE_LOCATION").c_str())) {
 
-            turretLogger::Instance()->Log("Turret will load resolved assets from cache file: "
-                                          + std::string(cache_location),
-                                          turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+            turretLogger::Instance()->Log("turret was given a cache location");
 
-            // set m_resolveFromFileCache to true, which will block non-cached queries
-            m_resolveFromFileCache = true;
-            m_cacheFilePath = cache_location;
+            // check if file exists
+            if (boost::filesystem::exists(cache_location)){
 
-            loadCache();
+                turretLogger::Instance()->Log("Turret will load resolved assets from cache file: "
+                                              + std::string(cache_location),
+                                              turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+
+                m_resolveFromFileCache = true;
+                m_cacheFilePath = cache_location;
+                loadCache();
+            }
+
+            else{
+                turretLogger::Instance()->Log("turret was given a cache location, but the file does not exist" + std::string(cache_location));
+            }
+
+
         }
 
         // Cache live resolves to disk - controlled by environment variable so DCC apps can opt in or out
-        else if(const char* write_disk_cache = std::getenv(("TURRET_" + clientIDUppercase + "_CACHE_TO_DISK").c_str()))
+        if(const char* write_disk_cache = std::getenv(("TURRET_" + clientIDUppercase + "_CACHE_TO_DISK").c_str()))
         {
 
             m_cacheToDisk = (write_disk_cache[0] == '1');
@@ -264,10 +295,11 @@ namespace turret_client
                 return cached_result->second.resolved_path;
             }
 
-            // If m_resolveFromFileCache is true, we do not allow any live resolves:
-            if (m_resolveFromFileCache == true) {
+            // Halt if live resolves are disabled
+            if (m_allowLiveResolves == false){
                 return "uncached_query";
             }
+
 
             // Perform live resolve
 
