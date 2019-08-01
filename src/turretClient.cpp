@@ -295,7 +295,7 @@ namespace turret_client
                 return cached_result->second.resolved_path;
             }
 
-            // And if we're told to disallow live resolves...
+            // Halt if live resolves are disabled
             if (m_allowLiveResolves == false){
                 return "uncached_query";
             }
