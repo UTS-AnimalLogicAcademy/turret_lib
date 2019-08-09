@@ -77,7 +77,7 @@ namespace turret_client
             int m_retries;
             bool m_cacheToDisk; // set by env var $TURRET_CLIENTID_CACHE_TO_DISK=1, default is false
             bool m_resolveFromFileCache; // set by env var $TURRET_CLIENTID_CACHE_LOCATION=/path/to/cache
-            bool m_allowLiveResolves; // set by env var $TURRET_CLIENTID_CACHE_LOCATION=/path/to/cache
+            bool m_allowLiveResolves; // set by env var $TURRET_CLIENTID_ALLOW_LIVE_RESOLVES
             std::string m_sessionID; // set by $TURRET_SESSION_ID=uuid
             std::string m_cacheFilePath;
             std::map<std::string, turretQueryCache> m_cachedQueries;
