@@ -128,22 +128,22 @@ namespace turret_client
 	
         if (const char* serverIP = std::getenv("TURRET_SERVER_IP")) { 
             m_serverIP = serverIP; 
-            turretLogger::Instance()->Log("Turret will use value from 'TURRET_SERVER_IP' environment variable for server IP: " + std::string(m_serverIP), turretLogger::LOG_LEVELS::DEFAULT);
+            turretLogger::Instance()->Log("Turret " + m_clientID + "will use value from 'TURRET_SERVER_IP' environment variable for server IP: " + std::string(m_serverIP), turretLogger::LOG_LEVELS::DEFAULT);
         }
 
         if (const char* serverPort = std::getenv("TURRET_SERVER_PORT")) { 
             m_serverPort = serverPort; 
-            turretLogger::Instance()->Log("Turret will use value from 'TURRET_SERVER_PORT' environment variable for server Port: " + std::string(m_serverPort), turretLogger::LOG_LEVELS::DEFAULT);
+            turretLogger::Instance()->Log("Turret " + m_clientID + " will use value from 'TURRET_SERVER_PORT' environment variable for server Port: " + std::string(m_serverPort), turretLogger::LOG_LEVELS::DEFAULT);
         }
 
         if (const char* timeout = std::getenv("TURRET_TIMEOUT")) { 
             m_timeout = std::stoi(timeout); 
-            turretLogger::Instance()->Log("Turret will use value from 'TURRET_TIMEOUT' environment variable for timeout: " + std::to_string(m_timeout), turretLogger::LOG_LEVELS::DEFAULT);
+            turretLogger::Instance()->Log("Turret " + m_clientID + " will use value from 'TURRET_TIMEOUT' environment variable for timeout: " + std::to_string(m_timeout), turretLogger::LOG_LEVELS::DEFAULT);
         }
 
         if (const char* retries = std::getenv("TURRET_RETRIES")) { 
             m_retries = std::stoi(retries);
-            turretLogger::Instance()->Log("Turret will use value from 'TURRET_RETRIES' environment variable for retries: " + std::to_string(m_retries), turretLogger::LOG_LEVELS::DEFAULT); 
+            turretLogger::Instance()->Log("Turret " + m_clientID + " will use value from 'TURRET_RETRIES' environment variable for retries: " + std::to_string(m_retries), turretLogger::LOG_LEVELS::DEFAULT);
         }
 
         // use env var value to determine whether live resolves are allowed
@@ -151,31 +151,30 @@ namespace turret_client
             m_allowLiveResolves = std::stoi(allowLiveResolves);
 
             if (m_allowLiveResolves){
-                turretLogger::Instance()->Log("Turret will allow live resolves");
+                turretLogger::Instance()->Log("Turret " + m_clientID + " will allow live resolves");
             }
             else{
-                turretLogger::Instance()->Log("Turret will disable live resolves");
+                turretLogger::Instance()->Log("Turret " + m_clientID + " will disable live resolves");
             }
 
 //            turretLogger::Instance()->Log("Turret will allow live resolves" + std::to_string(m_allowLiveResolves));
         }
         // default - live resolves are allowed
         else{
-            turretLogger::Instance()->Log("$TURRET_ALLOW_LIVE_RESOLVES not set, turret will default to allowing live resolves");
+            turretLogger::Instance()->Log("$TURRET_ALLOW_LIVE_RESOLVES not set, turret " + m_clientID + " will default to allowing live resolves");
             m_allowLiveResolves = true;
         }
-
 
         // Check if a disk cache location is provided by env var.  If it is, the client
         // will load previously resolved values from it:
         if(const char* cache_location = std::getenv(("TURRET_" + clientIDUppercase + "_CACHE_LOCATION").c_str())) {
 
-            turretLogger::Instance()->Log("turret was given a cache location");
+            turretLogger::Instance()->Log("turret " + m_clientID + " was given a cache location");
 
             // check if file exists
             if (boost::filesystem::exists(cache_location)){
 
-                turretLogger::Instance()->Log("Turret will load resolved assets from cache file: "
+                turretLogger::Instance()->Log("Turret " + m_clientID + " will load resolved assets from cache file: "
                                               + std::string(cache_location),
                                               turretLogger::LOG_LEVELS::ZMQ_QUERIES);
 
@@ -185,7 +184,7 @@ namespace turret_client
             }
 
             else{
-                turretLogger::Instance()->Log("turret was given a cache location, but the file does not exist" + std::string(cache_location));
+                turretLogger::Instance()->Log("turret " + m_clientID + " was given a cache location, but the file does not exist" + std::string(cache_location));
             }
 
 
@@ -198,14 +197,14 @@ namespace turret_client
             m_cacheToDisk = (write_disk_cache[0] == '1');
             m_cacheFilePath = TURRET_CACHE_DIR + m_clientID + "_" + m_sessionID + TURRET_CACHE_EXT;
 
-            turretLogger::Instance()->Log("Created Turret Client. Caching Queries (Internal: "
+            turretLogger::Instance()->Log("Created Turret " + m_clientID + " Client. Caching Queries (Internal: "
                                           + std::string((m_cacheToDisk ? "True" : "False")) + ")",
                                           turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
 
         }
 
         else{
-            turretLogger::Instance()->Log("Turret will not cache resolves to disk",
+            turretLogger::Instance()->Log("Turret " + m_clientID + " will not cache resolves to disk",
                                           turretLogger::LOG_LEVELS::ZMQ_QUERIES);
         }
 
