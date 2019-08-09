@@ -147,7 +147,7 @@ namespace turret_client
         }
 
         // use env var value to determine whether live resolves are allowed
-        if (const char* allowLiveResolves = std::getenv("TURRET_" + clientIDUppercase + "_ALLOW_LIVE_RESOLVES")) {
+        if (const char* allowLiveResolves = std::getenv(("TURRET_" + clientIDUppercase + "_ALLOW_LIVE_RESOLVES").c_str())) {
             m_allowLiveResolves = std::stoi(allowLiveResolves);
 
             if (m_allowLiveResolves){
