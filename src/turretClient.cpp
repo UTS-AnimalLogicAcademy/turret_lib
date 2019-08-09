@@ -147,7 +147,7 @@ namespace turret_client
         }
 
         // use env var value to determine whether live resolves are allowed
-        if (const char* allowLiveResolves = std::getenv("TURRET_ALLOW_LIVE_RESOLVES")) {
+        if (const char* allowLiveResolves = std::getenv("TURRET_" + clientIDUppercase + "_ALLOW_LIVE_RESOLVES")) {
             m_allowLiveResolves = std::stoi(allowLiveResolves);
 
             if (m_allowLiveResolves){
@@ -157,11 +157,10 @@ namespace turret_client
                 turretLogger::Instance()->Log("Turret " + m_clientID + " will disable live resolves");
             }
 
-//            turretLogger::Instance()->Log("Turret will allow live resolves" + std::to_string(m_allowLiveResolves));
         }
         // default - live resolves are allowed
         else{
-            turretLogger::Instance()->Log("$TURRET_ALLOW_LIVE_RESOLVES not set, turret " + m_clientID + " will default to allowing live resolves");
+            turretLogger::Instance()->Log("$TURRET_" + clientIDUppercase + "_ALLOW_LIVE_RESOLVES not set, turret " + m_clientID + " will default to allowing live resolves");
             m_allowLiveResolves = true;
         }
 
