@@ -213,7 +213,7 @@ namespace turret_client
     {
         const std::map<std::string, turret_client::turretQueryCache>::iterator it = m_cachedQueries.begin();
 
-        turretLogger::Instance()->Log("Turret " + m_clientID + " cache at desturctor:",
+        turretLogger::Instance()->Log("Turret " + m_clientID + " cache at destructor:",
                                       turretLogger::LOG_LEVELS::ZMQ_QUERIES);
 
         if (it != m_cachedQueries.end()) {
