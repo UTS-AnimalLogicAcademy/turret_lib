@@ -20,7 +20,6 @@
 
 #include <cstdlib>
 #include <ctime>
-
 #include <zmq.hpp>
 
 #ifndef TURRETLOGGER_H_
@@ -193,11 +192,19 @@ namespace turret_client
         if(const char* write_disk_cache = std::getenv(("TURRET_" + clientIDUppercase + "_CACHE_TO_DISK").c_str()))
         {
 
+            turretLogger::Instance()->Log("Turret " + m_clientID + " session id: " + m_sessionID, turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
+
+            if (m_sessionID.empty()){
+                turretLogger::Instance()->Log("Turret " + m_clientID +
+                                                      " m_cacheToDisk is True, but m_sessionID is not set, throwing exception in constructor.",
+                                              turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
+                throw;
+            }
+
             m_cacheToDisk = (write_disk_cache[0] == '1');
             m_cacheFilePath = TURRET_CACHE_DIR + m_clientID + "_" + m_sessionID + TURRET_CACHE_EXT;
 
-            turretLogger::Instance()->Log("Created Turret " + m_clientID + " Client. Caching Queries (Internal: "
-                                          + std::string((m_cacheToDisk ? "True" : "False")) + ")",
+            turretLogger::Instance()->Log("Turret " + m_clientID + " will cache resolves to disk",
                                           turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
 
         }
@@ -235,12 +242,20 @@ namespace turret_client
             }
         }
 
-        std::fstream fs(m_cacheFilePath.c_str(), std::fstream::out | std::ios::binary);
-        boost::archive::text_oarchive oarch(fs);
-        oarch << m_cachedQueries;
-        fs.close();
-        turretLogger::Instance()->Log(m_clientID + " resolver saved cache to " + m_cacheFilePath,
-                                      turretLogger::LOG_LEVELS::CACHE_FILE_IO);
+        try {
+            std::fstream fs(m_cacheFilePath.c_str(), std::fstream::out | std::ios::binary);
+            boost::archive::text_oarchive oarch(fs);
+            oarch << m_cachedQueries;
+            fs.close();
+            turretLogger::Instance()->Log(m_clientID + " resolver saved cache to " + m_cacheFilePath,
+                                          turretLogger::LOG_LEVELS::CACHE_FILE_IO);
+        }
+        catch(boost::archive::archive_exception) {
+            turretLogger::Instance()->Log(m_clientID + " resolver could not save cache to " + m_cacheFilePath,
+                                          turretLogger::LOG_LEVELS::CACHE_FILE_IO);
+        }
+
+
     }
 
     bool turretClient::loadCache() {
@@ -281,14 +296,11 @@ namespace turret_client
             // Search for cached result
             const std::map<std::string, turret_client::turretQueryCache>::iterator cached_result = m_cachedQueries.find(query);
 
+            // result was found in cache
             if (cached_result != m_cachedQueries.end()) {
-
-                // If resolving from a disk cache, don't log resolved paths, as they are already declared in the cache
-                if (m_resolveFromFileCache == true) {
-                    turretLogger::Instance()->Log(m_clientID + " resolver received cached response: "
-                                                  + cached_result->second.resolved_path + " for query: " + query
-                                                  + "\n", turretLogger::LOG_LEVELS::ZMQ_QUERIES);
-                }
+                turretLogger::Instance()->Log(m_clientID + " resolver received cached response: "
+                                              + cached_result->second.resolved_path + " for query: " + query
+                                              + "\n", turretLogger::LOG_LEVELS::ZMQ_QUERIES);
 
                 return cached_result->second.resolved_path;
             }
