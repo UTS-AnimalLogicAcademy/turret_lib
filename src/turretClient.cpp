@@ -219,17 +219,7 @@ namespace turret_client
 
     void turretClient::destroy()
     {
-        const std::map<std::string, turret_client::turretQueryCache>::iterator it = m_cachedQueries.begin();
-
-        turretLogger::Instance()->Log("Turret " + m_clientID + " cache at destructor:",
-                                      turretLogger::LOG_LEVELS::ZMQ_QUERIES);
-
-        if (it != m_cachedQueries.end()) {
-            turretLogger::Instance()->Log(it->first + " " + it->second.resolved_path,
-                                          turretLogger::LOG_LEVELS::ZMQ_QUERIES);
-        }
-
-        if(m_cacheToDisk) {
+        if((m_cacheToDisk) && (!m_cachedQueries.empty())) {
             saveCache();
         }
     }
