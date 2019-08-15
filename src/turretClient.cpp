@@ -193,15 +193,16 @@ namespace turret_client
         {
 
             turretLogger::Instance()->Log("Turret " + m_clientID + " session id: " + m_sessionID, turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
+            
+            m_cacheToDisk = (write_disk_cache[0] == '1');
 
-            if (m_sessionID.empty()){
+            if (m_cacheToDisk && m_sessionID.empty()){
                 turretLogger::Instance()->Log("Turret " + m_clientID +
                                                       " m_cacheToDisk is True, but m_sessionID is not set, throwing exception in constructor.",
                                               turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
                 throw;
             }
 
-            m_cacheToDisk = (write_disk_cache[0] == '1');
             m_cacheFilePath = TURRET_CACHE_DIR + m_clientID + "_" + m_sessionID + TURRET_CACHE_EXT;
 
             turretLogger::Instance()->Log("Turret " + m_clientID + " will cache resolves to disk",
