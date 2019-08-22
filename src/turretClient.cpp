@@ -228,6 +228,7 @@ namespace turret_client
         // Check that the location on disk exists. Create if it doesn't
         if(!(boost::filesystem::exists(TURRET_CACHE_DIR))) {
             if (boost::filesystem::create_directory(TURRET_CACHE_DIR)) {
+                boost::filesystem::permissions(TURRET_CACHE_DIR, boost::filesystem::perms::all_all);
                 turretLogger::Instance()->Log(m_clientID + " resolver created zmq cache directory: "
                                               + TURRET_CACHE_DIR);
             }
