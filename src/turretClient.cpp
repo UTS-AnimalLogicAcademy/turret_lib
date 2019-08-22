@@ -188,12 +188,9 @@ namespace turret_client
 
         }
 
-        // todo: need to check value!
         // Cache live resolves to disk - controlled by environment variable so DCC apps can opt in or out
         if(const char* write_disk_cache = std::getenv(("TURRET_" + clientIDUppercase + "_CACHE_TO_DISK").c_str()))
         {
-//            turretLogger::Instance()->Log("Turret " + m_clientID + " session id: " + m_sessionID, turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
-            
             m_cacheToDisk = (write_disk_cache[0] == '1');
 
             if (m_cacheToDisk && m_sessionID.empty()){
