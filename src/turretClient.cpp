@@ -182,10 +182,17 @@ namespace turret_client
             }
 
             else{
-                turretLogger::Instance()->Log("turret " + m_clientID + " was given a cache location, but the file does not exist" + std::string(cache_location));
+                turretLogger::Instance()->Log("turret " + m_clientID + " was given a cache location, but the file does not exist " + std::string(cache_location));
             }
 
 
+        }
+
+        if (const char* cache_dir = std::getenv("TURRET_CACHE_DIR")){
+            m_cacheDir = cache_dir;
+        }
+        else{
+            m_cacheDir = "/usr/tmp/turret";
         }
 
         // Cache live resolves to disk - controlled by environment variable so DCC apps can opt in or out
@@ -201,19 +208,32 @@ namespace turret_client
             }
 
             if (m_cacheToDisk){
-                m_cacheFilePath = TURRET_CACHE_DIR + m_clientID + "_" + m_sessionID + TURRET_CACHE_EXT;
+                m_cacheFilePath = m_cacheDir + m_clientID + "_" + m_sessionID + TURRET_CACHE_EXT;
 
                 turretLogger::Instance()->Log("Turret " + m_clientID + " will cache resolves to disk",
                                               turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
 
                 // Check that the location on disk exists. Create if it doesn't
-                if(!(boost::filesystem::exists(TURRET_CACHE_DIR))) {
-                    if (boost::filesystem::create_directory(TURRET_CACHE_DIR)) {
-                        boost::filesystem::permissions(TURRET_CACHE_DIR, boost::filesystem::perms::all_all);
+                if(!(boost::filesystem::exists(m_cacheDir))) {
+                    if (boost::filesystem::create_directory(m_cacheDir)) {
+                        boost::filesystem::permissions(m_cacheDir, boost::filesystem::perms::all_all);
                         turretLogger::Instance()->Log(m_clientID + " resolver created" + m_clientID + "cache directory: "
-                                                      + TURRET_CACHE_DIR);
+                                                      + m_cacheDir);
                     }
                 }
+//                m_cacheFilePath = TURRET_CACHE_DIR + m_clientID + "_" + m_sessionID + TURRET_CACHE_EXT;
+//
+//                turretLogger::Instance()->Log("Turret " + m_clientID + " will cache resolves to disk",
+//                                              turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
+//
+//                // Check that the location on disk exists. Create if it doesn't
+//                if(!(boost::filesystem::exists(TURRET_CACHE_DIR))) {
+//                    if (boost::filesystem::create_directory(TURRET_CACHE_DIR)) {
+//                        boost::filesystem::permissions(TURRET_CACHE_DIR, boost::filesystem::perms::all_all);
+//                        turretLogger::Instance()->Log(m_clientID + " resolver created" + m_clientID + "cache directory: "
+//                                                      + TURRET_CACHE_DIR);
+//                    }
+//                }
             }
             else{
                 turretLogger::Instance()->Log("Turret " + m_clientID + " will not cache resolves to disk",

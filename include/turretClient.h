@@ -35,7 +35,6 @@ namespace turret_client
     const int DEFAULT_ZMQ_TIMEOUT = 60000;
     const int DEFAULT_ZMQ_RETRIES = 50;
 
-    const std::string TURRET_CACHE_DIR = "/usr/tmp/turret/";
     const std::string TURRET_CACHE_EXT = ".turretcache";
 
     struct turretQueryCache {
@@ -80,6 +79,7 @@ namespace turret_client
             bool m_allowLiveResolves; // set by env var $TURRET_CLIENTID_ALLOW_LIVE_RESOLVES
             std::string m_sessionID; // set by $TURRET_SESSION_ID=uuid
             std::string m_cacheFilePath;
+            std::string m_cacheDir;
             std::map<std::string, turretQueryCache> m_cachedQueries;
     };
 }
