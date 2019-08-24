@@ -210,7 +210,7 @@ namespace turret_client
             if (m_cacheToDisk){
                 m_cacheFilePath = m_cacheDir + "/" + m_clientID + "_" + m_sessionID + TURRET_CACHE_EXT;
 
-                turretLogger::Instance()->Log("Turret " + m_clientID + " will cache resolves to disk",
+                turretLogger::Instance()->Log("Turret " + m_clientID + " will cache resolves to disk " + m_cacheFilePath,
                                               turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
 
                 // Check that the location on disk exists. Create if it doesn't
