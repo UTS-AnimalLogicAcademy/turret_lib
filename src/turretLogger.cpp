@@ -35,9 +35,9 @@ namespace turret_client {
 
     // -- Public
     turretLogger* turretLogger::Instance() {
-        if(&m_instance == nullptr) {
+        if(m_instance == nullptr) {
             std::lock_guard<std::mutex> lock(m_mutex);
-            if(&m_instance == nullptr) {
+            if(m_instance == nullptr) {
                 m_instance = new turretLogger();
             }
         }
@@ -45,10 +45,15 @@ namespace turret_client {
     }
 
     void turretLogger::Setup() {
-        if(const char* env_p = std::getenv("DEBUG_LOG_LEVEL"))
+
+        if(const char* env_p = std::getenv("TURRET_LOG_LEVEL")){
             m_logLevel = atoi(env_p);
-        if(const char* env_p = std::getenv("DEBUG_ENABLED"))
+        }
+
+        if(const char* env_p = std::getenv("TURRET_LOG_ENABLED")){
             m_logEnabled = (atoi(env_p) == 1) ? true : false;
+        }
+
     }
 
     void turretLogger::EnableLog() {
