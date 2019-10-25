@@ -366,6 +366,14 @@ namespace turret_client
                                    + std::to_string(m_retries)
                                    + " retries.", turretLogger::LOG_LEVELS::ZMQ_ERROR);
 
-        return "Unable to parse query";
+        // return a default empty usd to avoid spamming logs with warnings
+        if (const char* defaultUSD = std::getenv("DEFAULT_USD")) {
+            return defaultUSD;
+        }
+
+        else{
+            return "Unable to parse query";
+        }
+
     }
 }
