@@ -310,7 +310,11 @@ namespace turret_client
 
             // Halt if live resolves are disabled
             if (m_allowLiveResolves == false){
-                return "uncached_query";
+                // return a default empty usd to avoid spamming logs with warnings
+                if (const char* defaultUSD = std::getenv("DEFAULT_USD"))
+                    return defaultUSD;
+                else
+                    return "uncached_query";
             }
 
 
