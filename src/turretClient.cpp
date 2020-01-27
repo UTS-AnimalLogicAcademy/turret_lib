@@ -372,6 +372,10 @@ namespace turret_client
 
         // return a default empty usd to avoid spamming logs with warnings
         if (const char* defaultUSD = std::getenv("DEFAULT_USD")) {
+            
+            turretQueryCache cache = {defaultUSD, std::time(0)};
+            m_cachedQueries.insert(std::make_pair(query, cache));
+
             return defaultUSD;
         }
 
