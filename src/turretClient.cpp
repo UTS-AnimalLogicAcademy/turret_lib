@@ -296,16 +296,10 @@ namespace turret_client
                                            turretLogger::LOG_LEVELS::DEFAULT);
             }
 
-            // Search for cached result
-            const std::map<std::string, turret_client::turretQueryCache>::iterator cached_result = m_cachedQueries.find(query);
-
-            // result was found in cache
-            if (cached_result != m_cachedQueries.end()) {
-                turretLogger::Instance()->Log(m_clientID + " resolver received cached response: "
-                                              + cached_result->second.resolved_path + " for query: " + query
-                                              + "\n", turretLogger::LOG_LEVELS::ZMQ_QUERIES);
-
-                return cached_result->second.resolved_path;
+            tbb::concurrent_hash_map<std::string, turret_client::turretQueryCache>::const_accessor ac;
+            bool found = m_cachedQueries.find(ac, query);
+            if (found){
+                return ac->second.resolved_path;
             }
 
             // Halt if live resolves are disabled

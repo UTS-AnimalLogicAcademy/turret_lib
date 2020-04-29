@@ -31,6 +31,21 @@ find_package(Boost
         REQUIRED
         )
 
+set(TBB_ROOT_DIR $ENV{REZ_TBB_ROOT})
+set(TBB_INCLUDE_DIR $ENV{REZ_TBB_ROOT}/include)
+set(TBB_LIBRARY $ENV{TBB_LIBRARIES})
+
+find_package(TBB REQUIRED COMPONENTS tbb)
+add_definitions(${TBB_DEFINITIONS})
+
+target_include_directories(turret PRIVATE
+        ${CMAKE_SOURCE_DIR}/include
+        ${PC_LIBZMQ_INCLUDE_DIRS}
+        ${Boost_INCLUDE_DIRS}
+        ${CPPZMQ_INCLUDE_DIRS}
+        ${TBB_INCLUDE_DIR}
+        )
+
 target_include_directories(turret PRIVATE
         ${CMAKE_SOURCE_DIR}/include
         ${PC_LIBZMQ_INCLUDE_DIRS}
