@@ -72,6 +72,7 @@ namespace turret_client
         m_serverPort(turret_client::DEFAULT_ZMQ_PORT),
         m_timeout(turret_client::DEFAULT_ZMQ_TIMEOUT),
         m_retries(turret_client::DEFAULT_ZMQ_RETRIES),
+        m_doLog(true),
         m_resolveFromFileCache(false),
         m_allowLiveResolves(true),
         m_cacheFilePath("") {
@@ -85,6 +86,7 @@ namespace turret_client
         m_serverPort(turret_client::DEFAULT_ZMQ_PORT),
         m_timeout(turret_client::DEFAULT_ZMQ_TIMEOUT),
         m_retries(turret_client::DEFAULT_ZMQ_RETRIES),
+        m_doLog(true),
         m_resolveFromFileCache(false),
         m_cacheFilePath("") {
         setup();
@@ -92,7 +94,11 @@ namespace turret_client
 
     turretClient::~turretClient() {
         destroy();
-        turretLogger::Instance()->Log("Destroyed " + m_clientID + " client.", turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+
+        if(m_doLog){
+            turretLogger::Instance()->Log("Destroyed " + m_clientID + " client.", turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+        }
+
     }
 
     std::string turretClient::resolve_name(const std::string& a_path) {
@@ -123,26 +129,46 @@ namespace turret_client
             m_sessionID = sessionID;
         }
 
+        if (const char* doLog = std::getenv("TURRET_DO_LOG")) {
+            m_doLog = std::stoi(doLog);
+        }
+
 	    // Initialize server settings
 	
         if (const char* serverIP = std::getenv("TURRET_SERVER_IP")) { 
-            m_serverIP = serverIP; 
-            turretLogger::Instance()->Log("Turret " + m_clientID + "will use value from 'TURRET_SERVER_IP' environment variable for server IP: " + std::string(m_serverIP), turretLogger::LOG_LEVELS::DEFAULT);
+            m_serverIP = serverIP;
+
+            if(m_doLog){
+                turretLogger::Instance()->Log("Turret " + m_clientID + "will use value from 'TURRET_SERVER_IP' environment variable for server IP: " + std::string(m_serverIP), turretLogger::LOG_LEVELS::DEFAULT);
+            }
+
         }
 
         if (const char* serverPort = std::getenv("TURRET_SERVER_PORT")) { 
-            m_serverPort = serverPort; 
-            turretLogger::Instance()->Log("Turret " + m_clientID + " will use value from 'TURRET_SERVER_PORT' environment variable for server Port: " + std::string(m_serverPort), turretLogger::LOG_LEVELS::DEFAULT);
+            m_serverPort = serverPort;
+
+            if(m_doLog){
+                turretLogger::Instance()->Log("Turret " + m_clientID + " will use value from 'TURRET_SERVER_PORT' environment variable for server Port: " + std::string(m_serverPort), turretLogger::LOG_LEVELS::DEFAULT);
+            }
+
         }
 
         if (const char* timeout = std::getenv("TURRET_TIMEOUT")) { 
-            m_timeout = std::stoi(timeout); 
-            turretLogger::Instance()->Log("Turret " + m_clientID + " will use value from 'TURRET_TIMEOUT' environment variable for timeout: " + std::to_string(m_timeout), turretLogger::LOG_LEVELS::DEFAULT);
+            m_timeout = std::stoi(timeout);
+
+            if(m_doLog){
+                turretLogger::Instance()->Log("Turret " + m_clientID + " will use value from 'TURRET_TIMEOUT' environment variable for timeout: " + std::to_string(m_timeout), turretLogger::LOG_LEVELS::DEFAULT);
+            }
+
         }
 
         if (const char* retries = std::getenv("TURRET_RETRIES")) { 
             m_retries = std::stoi(retries);
-            turretLogger::Instance()->Log("Turret " + m_clientID + " will use value from 'TURRET_RETRIES' environment variable for retries: " + std::to_string(m_retries), turretLogger::LOG_LEVELS::DEFAULT);
+
+            if(m_doLog){
+                turretLogger::Instance()->Log("Turret " + m_clientID + " will use value from 'TURRET_RETRIES' environment variable for retries: " + std::to_string(m_retries), turretLogger::LOG_LEVELS::DEFAULT);
+            }
+
         }
 
         // use env var value to determine whether live resolves are allowed
@@ -150,16 +176,27 @@ namespace turret_client
             m_allowLiveResolves = std::stoi(allowLiveResolves);
 
             if (m_allowLiveResolves){
-                turretLogger::Instance()->Log("Turret " + m_clientID + " will allow live resolves");
+
+                if(m_doLog){
+                    turretLogger::Instance()->Log("Turret " + m_clientID + " will allow live resolves");
+                }
+
             }
             else{
-                turretLogger::Instance()->Log("Turret " + m_clientID + " will disable live resolves");
+                if(m_doLog){
+                    turretLogger::Instance()->Log("Turret " + m_clientID + " will disable live resolves");
+                }
+
             }
 
         }
         // default - live resolves are allowed
         else{
-            turretLogger::Instance()->Log("$TURRET_" + clientIDUppercase + "_ALLOW_LIVE_RESOLVES not set, turret " + m_clientID + " will default to allowing live resolves");
+
+            if(m_doLog){
+                turretLogger::Instance()->Log("$TURRET_" + clientIDUppercase + "_ALLOW_LIVE_RESOLVES not set, turret " + m_clientID + " will default to allowing live resolves");
+            }
+
             m_allowLiveResolves = true;
         }
 
@@ -167,14 +204,19 @@ namespace turret_client
         // will load previously resolved values from it:
         if(const char* cache_location = std::getenv(("TURRET_" + clientIDUppercase + "_CACHE_LOCATION").c_str())) {
 
-            turretLogger::Instance()->Log("turret " + m_clientID + " was given a cache location");
+            if(m_doLog){
+                turretLogger::Instance()->Log("turret " + m_clientID + " was given a cache location");
+            }
 
             // check if file exists
             if (boost::filesystem::exists(cache_location)){
 
-                turretLogger::Instance()->Log("Turret " + m_clientID + " will load resolved assets from cache file: "
-                                              + std::string(cache_location),
-                                              turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+                if(m_doLog){
+                    turretLogger::Instance()->Log("Turret " + m_clientID + " will load resolved assets from cache file: "
+                                                  + std::string(cache_location),
+                                                  turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+                }
+
 
                 m_resolveFromFileCache = true;
                 m_cacheFilePath = cache_location;
@@ -182,7 +224,11 @@ namespace turret_client
             }
 
             else{
-                turretLogger::Instance()->Log("turret " + m_clientID + " was given a cache location, but the file does not exist " + std::string(cache_location));
+
+                if(m_doLog){
+                    turretLogger::Instance()->Log("turret " + m_clientID + " was given a cache location, but the file does not exist " + std::string(cache_location));
+                }
+
             }
 
 
@@ -201,37 +247,56 @@ namespace turret_client
             m_cacheToDisk = (write_disk_cache[0] == '1');
 
             if (m_cacheToDisk && m_sessionID.empty()){
-                turretLogger::Instance()->Log("Turret " + m_clientID +
-                                                      " m_cacheToDisk is True, but m_sessionID is not set, throwing exception in constructor.",
-                                              turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
+
+                if(m_doLog){
+                    turretLogger::Instance()->Log("Turret " + m_clientID +
+                                                  " m_cacheToDisk is True, but m_sessionID is not set, throwing exception in constructor.",
+                                                  turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
+                }
+
                 throw;
             }
 
             if (m_cacheToDisk){
                 m_cacheFilePath = m_cacheDir + "/" + m_clientID + "_" + m_sessionID + TURRET_CACHE_EXT;
 
-                turretLogger::Instance()->Log("Turret " + m_clientID + " will cache resolves to disk " + m_cacheFilePath,
-                                              turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
+                if(m_doLog){
+                    turretLogger::Instance()->Log("Turret " + m_clientID + " will cache resolves to disk " + m_cacheFilePath,
+                                                  turretLogger::LOG_LEVELS::ZMQ_INTERNAL);
+                }
+
 
                 // Check that the location on disk exists. Create if it doesn't
                 if(!(boost::filesystem::exists(m_cacheDir))) {
                     if (boost::filesystem::create_directory(m_cacheDir)) {
                         boost::filesystem::permissions(m_cacheDir, boost::filesystem::perms::all_all);
-                        turretLogger::Instance()->Log(m_clientID + " resolver created" + m_clientID + "cache directory: "
-                                                      + m_cacheDir);
+
+                        if(m_doLog){
+                            turretLogger::Instance()->Log(m_clientID + " resolver created" + m_clientID + "cache directory: "
+                                                          + m_cacheDir);
+                        }
+
                     }
                 }
 
             }
             else{
-                turretLogger::Instance()->Log("Turret " + m_clientID + " will not cache resolves to disk",
-                                              turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+
+                if(m_doLog){
+                    turretLogger::Instance()->Log("Turret " + m_clientID + " will not cache resolves to disk",
+                                                  turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+                }
+
             }
         }
 
         else{
-            turretLogger::Instance()->Log("Turret " + m_clientID + " will not cache resolves to disk",
-                                          turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+
+            if(m_doLog){
+                turretLogger::Instance()->Log("Turret " + m_clientID + " will not cache resolves to disk",
+                                              turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+            }
+
         }
 
     }
@@ -250,12 +315,20 @@ namespace turret_client
             boost::archive::text_oarchive oarch(fs);
             oarch << m_cachedQueries;
             fs.close();
-            turretLogger::Instance()->Log(m_clientID + " resolver saved cache to " + m_cacheFilePath,
-                                          turretLogger::LOG_LEVELS::CACHE_FILE_IO);
+
+            if(m_doLog){
+                turretLogger::Instance()->Log(m_clientID + " resolver saved cache to " + m_cacheFilePath,
+                                              turretLogger::LOG_LEVELS::CACHE_FILE_IO);
+            }
+
         }
         catch(boost::archive::archive_exception) {
-            turretLogger::Instance()->Log(m_clientID + " resolver could not save cache to " + m_cacheFilePath,
-                                          turretLogger::LOG_LEVELS::CACHE_FILE_IO);
+
+            if(m_doLog){
+                turretLogger::Instance()->Log(m_clientID + " resolver could not save cache to " + m_cacheFilePath,
+                                              turretLogger::LOG_LEVELS::CACHE_FILE_IO);
+            }
+
         }
 
 
@@ -265,8 +338,12 @@ namespace turret_client
         std::fstream fs(m_cacheFilePath.c_str(), std::fstream::in | std::ios::binary);
 
         if(!fs.is_open()) {
-            turretLogger::Instance()->Log(m_clientID + " resolver no cache file present on disk.",
-                                          turretLogger::LOG_LEVELS::CACHE_FILE_IO);
+
+            if(m_doLog){
+                turretLogger::Instance()->Log(m_clientID + " resolver no cache file present on disk.",
+                                              turretLogger::LOG_LEVELS::CACHE_FILE_IO);
+            }
+
             return false;
         }
 
@@ -292,18 +369,25 @@ namespace turret_client
 
         for(int i = 0; i < m_retries; i++) {
             if(i > 1) {
-                turretLogger::Instance()->Log(m_clientID + " resolver parser had to retry: " + std::to_string(i),
-                                           turretLogger::LOG_LEVELS::DEFAULT);
+
+                if(m_doLog){
+                    turretLogger::Instance()->Log(m_clientID + " resolver parser had to retry: " + std::to_string(i),
+                                                  turretLogger::LOG_LEVELS::DEFAULT);
+                }
+
             }
 
             // Search for cached result
             const std::map<std::string, turret_client::turretQueryCache>::iterator cached_result = m_cachedQueries.find(query);
-
             // result was found in cache
             if (cached_result != m_cachedQueries.end()) {
-                turretLogger::Instance()->Log(m_clientID + " resolver received cached response: "
-                                              + cached_result->second.resolved_path + " for query: " + query
-                                              + "\n", turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+
+                if(m_doLog){
+                    turretLogger::Instance()->Log(m_clientID + " resolver received cached response: "
+                                                  + cached_result->second.resolved_path + " for query: " + query
+                                                  + "\n", turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+                }
+
 
                 return cached_result->second.resolved_path;
             }
@@ -342,8 +426,11 @@ namespace turret_client
                 //There has been an error
                 const char* errmsg = zmq_strerror(errnum);
 
-                turretLogger::Instance()->Log(m_clientID + " resolver ZMQ ERROR: " + std::to_string(errnum)
-                                              + " : " + std::string(errmsg), turretLogger::LOG_LEVELS::ZMQ_ERROR);
+                if(m_doLog){
+                    turretLogger::Instance()->Log(m_clientID + " resolver ZMQ ERROR: " + std::to_string(errnum)
+                                                  + " : " + std::string(errmsg), turretLogger::LOG_LEVELS::ZMQ_ERROR);
+                }
+
                 continue;
             }
         
@@ -357,18 +444,27 @@ namespace turret_client
             // insert will not add duplicate keys
             m_cachedQueries.insert(std::make_pair(query, cache));
 
-            turretLogger::Instance()->Log(m_clientID + " resolver received live response: "
-                                          + realPath + " for query: " + query + "\n",
-                                          turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+            if(m_doLog){
+                turretLogger::Instance()->Log(m_clientID + " resolver received live response: "
+                                              + realPath + " for query: " + query + "\n",
+                                              turretLogger::LOG_LEVELS::ZMQ_QUERIES);
+            }
+
 
             m_socket.close();
             m_context.close();
             return realPath;
         }
 
-        turretLogger::Instance()->Log(m_clientID + " resolver unable to query after "
-                                   + std::to_string(m_retries)
-                                   + " retries.", turretLogger::LOG_LEVELS::ZMQ_ERROR);
+        turretQueryCache cache = {"NOT_FOUND", std::time(0)};
+        m_cachedQueries.insert(std::make_pair(query, cache));
+
+        if(m_doLog){
+            turretLogger::Instance()->Log(m_clientID + " resolver unable to query after "
+                                          + std::to_string(m_retries)
+                                          + " retries.", turretLogger::LOG_LEVELS::ZMQ_ERROR);
+        }
+
 
         // return a default empty usd to avoid spamming logs with warnings
         if (const char* defaultUSD = std::getenv("DEFAULT_USD")) {
