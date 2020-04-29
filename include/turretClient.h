@@ -75,6 +75,7 @@ namespace turret_client
             std::string m_serverPort;
             int m_timeout;
             int m_retries;
+            bool m_doLog;
             bool m_cacheToDisk; // set by env var $TURRET_CLIENTID_CACHE_TO_DISK=1, default is false
             bool m_resolveFromFileCache; // set by env var $TURRET_CLIENTID_CACHE_LOCATION=/path/to/cache
             bool m_allowLiveResolves; // set by env var $TURRET_CLIENTID_ALLOW_LIVE_RESOLVES
