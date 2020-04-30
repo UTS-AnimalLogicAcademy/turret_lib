@@ -10,7 +10,8 @@ authors = [ 'ben.skinner',
 
 requires = ['libzmq-4',
             'cppzmq-4',
-            'boost-1.55'
+            'boost-1.55',
+            'tbb'
 ]
 
 build_requires = [

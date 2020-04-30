@@ -24,6 +24,10 @@
 
 #include <boost/serialization/serialization.hpp>
 
+#include "tbb/concurrent_hash_map.h"
+#include "tbb/mutex.h"
+#include "tbb/tbb_thread.h"
+
 namespace turret_client
 {
     const std::string TANK_PREFIX = "tank://";
@@ -82,6 +86,6 @@ namespace turret_client
             std::string m_sessionID; // set by $TURRET_SESSION_ID=uuid
             std::string m_cacheFilePath;
             std::string m_cacheDir;
-            std::map<std::string, turretQueryCache> m_cachedQueries;
+            tbb::concurrent_hash_map<std::string, turretQueryCache> m_cachedQueries;
     };
 }
