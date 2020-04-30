@@ -61,4 +61,5 @@ install(FILES ${inc_files} DESTINATION include)
 target_link_libraries(turret
         ${ZeroMQ_LIBRARY}
         ${Boost_LIBRARIES}
+        ${TBB_LIBRARIES}
         )

@@ -31,7 +31,6 @@
 #include <sstream>
 #include <fstream>
 #include <stdlib.h>
-
 #include <sys/stat.h>
 
 #include <boost/serialization/map.hpp>
@@ -321,24 +320,13 @@ namespace turret_client {
             std::fstream fs(m_cacheFilePath.c_str(), std::fstream::out | std::ios::binary);
             std::map<std::string, turretQueryCache> stdMapCachedQueries;
 
-            tbb::concurrent_hash_map<std::string, turretQueryCache>::iterator it = m_cachedQueries.begin();
-            while (it != m_cachedQueries.end()){
+            for( tbb::concurrent_hash_map<std::string, turretQueryCache>::iterator it = m_cachedQueries.begin() ; it != m_cachedQueries.end() ; ++it ){
                 std::string query = it->first;
                 std::string realPath = it->second.resolved_path;
                 std::time_t timestamp = it->second.timestamp;
                 turretQueryCache cache = {realPath, timestamp};
                 stdMapCachedQueries.insert(std::make_pair(query, cache));
             }
-
-//            tbb::parallel_for( m_cachedQueries.range(), [](const tbb::concurrent_hash_map::range_type &r) {
-//                for( tbb::concurrent_hash_map::iterator it = r.begin(); it != r.end(); it++){
-//                    std::string query = it->first;
-//                    std::string realPath = it->second.resolved_path;
-//                    std::time_t timestamp = it->second.timestamp;
-//                    turretQueryCache cache = {realPath, timestamp};
-//                    stdMapCachedQueries.insert(std::make_pair(query, cache));
-//                }
-//            } );
 
             boost::archive::text_oarchive oarch(fs);
             oarch << stdMapCachedQueries;
@@ -379,16 +367,16 @@ namespace turret_client {
         std::map<std::string, turretQueryCache> stdMapCachedQueries;
         iarch >> stdMapCachedQueries;
 
-        std::map<std::string, turretQueryCache>::iterator it = stdMapCachedQueries.begin();
-        while (it != stdMapCachedQueries.end()) {
+        for (std::map<std::string, turretQueryCache>::iterator it = stdMapCachedQueries.begin(); it != stdMapCachedQueries.end(); ++it){
             std::string query = it->first;
             std::string realPath = it->second.resolved_path;
             std::time_t timestamp = it->second.timestamp;
             turretQueryCache cache = {realPath, timestamp};
+// dan: not entirely sure of best practice here:
+//            tbb::concurrent_hash_map<std::string, turret_client::turretQueryCache>::accessor a;
+//            m_cachedQueries.insert(a, std::make_pair(query, cache));
             m_cachedQueries.insert(std::make_pair(query, cache));
         }
-
-        // iterate over stdMapCachedQueries and populate m_cachedQueries
 
         fs.close();
 
