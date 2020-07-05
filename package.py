@@ -2,7 +2,7 @@
 
 name = 'turret_lib'
 
-version = '1.1.18'
+version = '1.1.19'
 
 authors = [ 'ben.skinner',
             'daniel.flood'
@@ -11,7 +11,7 @@ authors = [ 'ben.skinner',
 requires = ['libzmq-4',
             'cppzmq-4',
             'boost-1.55',
-            'tbb'
+            'tbb-2019'
 ]
 
 build_requires = [
