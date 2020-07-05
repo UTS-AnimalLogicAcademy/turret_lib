@@ -2,7 +2,7 @@
 
 name = 'turret_lib'
 
-version = '1.1.20'
+version = '1.1.21'
 
 authors = [ 'ben.skinner',
             'daniel.flood'
@@ -11,14 +11,16 @@ authors = [ 'ben.skinner',
 requires = ['libzmq-4',
             'cppzmq-4',
             'boost-1.55',
-            'tbb-2019'
 ]
 
 build_requires = [
     'cmake-3.2',
 ]
 
-variants = [['platform-linux', 'arch-x86_64']]
+variants = [
+    ['platform-linux', 'arch-x86_64', 'tbb-4'],
+    ['platform-linux', 'arch-x86_64', 'tbb-2019']
+]
 
 def commands():
     env.LIBTURRET_ROOT.set("{this.root}")
