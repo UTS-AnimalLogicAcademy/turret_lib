@@ -179,8 +179,7 @@ namespace turret_client {
         }
 
         // use env var value to determine whether live resolves are allowed
-        if (const char *allowLiveResolves = std::getenv(
-                ("TURRET_" + clientIDUppercase + "_ALLOW_LIVE_RESOLVES").c_str())) {
+        if (const char *allowLiveResolves = std::getenv(("TURRET_" + clientIDUppercase + "_ALLOW_LIVE_RESOLVES").c_str())) {
             m_allowLiveResolves = std::stoi(allowLiveResolves);
 
             if (m_allowLiveResolves) {
@@ -378,12 +377,31 @@ namespace turret_client {
             m_cachedQueries.insert(std::make_pair(query, cache));
         }
 
+        m_cacheLoaded = true;
+
         fs.close();
 
         return true;
     }
 
     std::string turretClient::parse_query(const std::string &a_query) {
+
+        std::string clientIDUppercase = m_clientID;
+        std::transform(clientIDUppercase.begin(), clientIDUppercase.end(), clientIDUppercase.begin(), ::toupper);
+
+        if (const char *retryCacheLoad = std::getenv(("TURRET_" + clientIDUppercase + "_RETRY_CACHE_LOAD").c_str())){
+            m_retryCacheLoad = std::stoi(retryCacheLoad);
+
+            // A cache file path may have been given at setup, but the file may have been created after setup.
+            if (m_retryCacheLoad){
+
+                // a cache filepath was given but the in-memory cache is empty
+                if (!m_cacheFilePath.empty() && !m_cacheLoaded){
+                    loadCache();
+                }
+            }
+        }
+
 
         std::string query = a_query;
 
