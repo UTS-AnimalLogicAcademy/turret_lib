@@ -2,7 +2,7 @@
 
 name = 'turret_lib'
 
-version = '1.2.0'
+version = '1.2.1'
 
 authors = [ 'ben.skinner',
             'daniel.flood'
@@ -13,12 +13,13 @@ requires = ['libzmq-4',
 ]
 
 build_requires = [
-    'cmake-3.2',
+    'cmake-3.16',
 ]
 
 variants = [
   ['platform-linux', 'arch-x86_64', 'tbb-4', 'boost-1.55'],
   ['platform-linux', 'arch-x86_64', 'tbb-2019', 'boost-1.55'],
+  ['platform-linux', 'arch-x86_64', 'tbb-2017', 'boost-1.61'],
   ['platform-linux', 'arch-x86_64', 'tbb_katana-2017', 'boost_katana-1.61'],
 ]
 
