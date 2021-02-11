@@ -2,7 +2,7 @@
 
 name = 'turret_lib'
 
-version = '1.2.2'
+version = '1.2.3'
 
 authors = [ 'ben.skinner',
             'daniel.flood'
@@ -18,9 +18,9 @@ private_build_requires = [
 
 variants = [
   ['platform-linux', 'arch-x86_64', 'tbb-4', 'boost-1.55'],
-  ['platform-linux', 'arch-x86_64', 'tbb-2019', 'boost-1.55'],
-  ['platform-linux', 'arch-x86_64', 'tbb-2017', 'boost-1.61'],
   ['platform-linux', 'arch-x86_64', 'tbb_katana-2017', 'boost_katana-1.61'],
+  ['platform-linux', 'arch-x86_64', 'tbb-2019.0', 'boost-1.61'],# houdini 18.0
+  ['platform-linux', 'arch-x86_64', 'tbb-2019.9', 'boost-1.72'] # houdini 18.5
 ]
 
 def commands():
