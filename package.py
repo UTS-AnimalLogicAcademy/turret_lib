@@ -2,7 +2,7 @@
 
 name = 'turret_lib'
 
-version = '1.2.5'
+version = '1.2.6'
 
 authors = [ 'ben.skinner',
             'daniel.flood'
@@ -21,8 +21,8 @@ variants = [
   ['platform-linux', 'arch-x86_64', 'tbb-2017.0', 'boost-1.55', 'devtoolset-6'], # maya 2019
   ['platform-linux', 'arch-x86_64', 'tbb-2017.8', 'boost-1.61', 'devtoolset-6'],
   ['platform-linux', 'arch-x86_64', 'tbb_katana-2017', 'boost_katana-1.61'],
-#  ['platform-linux', 'arch-x86_64', 'tbb-2019.0', 'boost-1.61', 'devtoolset-6'],# houdini 18.0
-  ['platform-linux', 'arch-x86_64', 'tbb-2019.9', 'boost-1.72', 'devtoolset-7'] # houdini 18.5
+  ['platform-linux', 'arch-x86_64', 'tbb-2019.0', 'boost-1.61', 'devtoolset-6'],# houdini 18.0
+  ['platform-linux', 'arch-x86_64', 'tbb-2019.9', 'boost-1.72', 'devtoolset-6'] # houdini 18.5
 ]
 
 def commands():
