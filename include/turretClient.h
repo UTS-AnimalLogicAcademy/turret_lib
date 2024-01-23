@@ -72,6 +72,7 @@ namespace turret_client
             void destroy();
             std::string parse_query(const std::string& a_query);
             void saveCache();
+            void clearCache();
             bool loadCache();
             void appendCache();
             std::string m_clientID; // set by constructor

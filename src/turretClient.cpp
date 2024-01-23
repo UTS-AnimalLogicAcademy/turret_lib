@@ -384,6 +384,34 @@ namespace turret_client {
         return true;
     }
 
+//Removing in case not thread safe, found other solution
+    // void turretClient::clearCache() {
+    //     try {
+    //         if ((!m_cachedQueries.empty())) {
+    //             //Jonah: iterating on a copy of the hash map, even if this iterator is not thread-safe, should keep erasures in the original m_cachedQueries map thread-safe? Unsure about this though.
+    //             tbb::concurrent_hash_map<std::string, turretQueryCache> currentCache = m_cachedQueries;
+    //             for( tbb::concurrent_hash_map<std::string, turretQueryCache>::iterator it = currentCache.begin() ; it != currentCache.end() ; ++it ){
+    //                 std::string query = it->first;
+    //                 m_cachedQueries.erase(query);
+    //             }
+
+    //             // not thread safe
+    //             // m_cachedQueries.clear();
+    //         }
+
+    //         if (m_doLog) {
+    //             turretLogger::Instance()->Log(m_clientID + " cache cleared",
+    //                                             turretLogger::LOG_LEVELS::CACHE_FILE_IO);
+    //         }
+    //     }
+    //     catch (...) {
+    //         if (m_doLog) {
+    //             turretLogger::Instance()->Log(m_clientID + " cache could not be cleared",
+    //                                           turretLogger::LOG_LEVELS::CACHE_FILE_IO);
+    //         }
+    //     }
+    // }
+
     std::string turretClient::parse_query(const std::string &a_query) {
 
         std::string clientIDUppercase = m_clientID;
