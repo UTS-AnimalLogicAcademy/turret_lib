@@ -2,7 +2,7 @@
 
 name = 'turret_lib'
 
-version = '1.4.0'
+version = '1.5.0'
 
 authors = [ 'ben.skinner',
             'daniel.flood',
@@ -27,7 +27,8 @@ variants = [
   ['platform-linux', 'arch-x86_64', 'tbb-2019.0', 'boost-1.61', '!tbb_katana','!boost_katana', '!maya', '!nuke'],# houdini 18.0
   ['platform-linux', 'arch-x86_64', 'tbb-2019.9', 'boost-1.72.0', '!tbb_katana','!boost_katana', '!maya', '!nuke'], # houdini 18.5
   ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.72.0', '!python-3', '!tbb_katana','!boost_katana', '!nuke'], # houdini 19
-  ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.72.1', 'python-3.7', '!tbb_katana','!boost_katana', '!nuke'], # houdini 19.5
+  ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.72.1', 'python-3.7', '!tbb_katana','!boost_katana', '!nuke'], # houdini 19.5 3.7
+  ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.72.1', 'python-3.9', '!tbb_katana','!boost_katana', '!nuke'], # houdini 19.5 3.9
   ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.72.1', 'python-3.10', '!tbb_katana','!boost_katana', '!nuke'], # houdini 20
   ['platform-linux', 'arch-x86_64', 'tbb-2017.0', 'boost-1.61', '!tbb_katana','!boost_katana', '!nuke'], # maya 2022, usd-20.11
   ['platform-linux', 'arch-x86_64', 'tbb_katana-2019.6', 'boost_katana-1.70', '!tbb', '!boost', 'katana-4.5.2', '!maya', '!nuke', '!blender'], # katana 4.5v2
