@@ -2,7 +2,7 @@
 
 name = 'turret_lib'
 
-version = '1.6.1'
+version = '1.6.2'
 
 authors = [ 'ben.skinner',
             'daniel.flood',
@@ -26,7 +26,7 @@ variants = [
   ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.72.1', 'python-3.10', '!tbb_katana','!boost_katana', '!nuke'], # houdini 20
   ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.82', 'python-3.10', '!tbb_katana','!boost_katana', '!nuke'], # houdini 20.5 py3.10
   ['platform-linux', 'arch-x86_64', 'tbb_katana-2020.3', 'boost_katana-1.76', '!tbb', '!boost', '!maya', '!nuke', '!blender'], #katana 6.5/mari 6
-  ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.80', '!maya', '!nuke', '!tbb_katana','!boost_katana'] #usd 23.08 standalone
+  ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.80', '!maya', '!tbb_katana','!boost_katana'] #usd 23.08 standalone
 ]
 
 def commands():
