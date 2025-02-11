@@ -2,7 +2,7 @@
 
 name = 'turret_lib'
 
-version = '1.6.6'
+version = '1.6.7'
 
 authors = [ 'ben.skinner',
             'daniel.flood',
@@ -29,7 +29,8 @@ variants = [
   ['platform-linux', 'arch-x86_64', 'tbb_katana-2020.3', 'boost_katana-1.80', '!tbb', '!boost', '!maya', '!nuke', '!blender'], #Katana 7/Mari 7
   ['platform-linux', 'arch-x86_64', 'tbb_katana-2020.3', 'boost_katana-1.82', '!tbb', '!boost', '!maya', '!nuke', '!blender'], #Katana 8
   ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.80<1.80.0.2', '!maya', '!tbb_katana','!boost_katana', '!nuke'], #usd 23.08 standalone
-  ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.80', '!maya', '!tbb_katana','!boost_katana', '!usd'], #usd 23.08 standalone
+  ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.80.0.2', '!tbb_katana','!boost_katana', '!usd'],
+  ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.82.0.1', '!maya', '!tbb_katana','!boost_katana', '!nuke'], #usd 25.02 standalone
 ]
 
 def commands():
