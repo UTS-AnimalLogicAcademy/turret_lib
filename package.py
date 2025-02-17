@@ -2,7 +2,7 @@
 
 name = 'turret_lib'
 
-version = '1.6.7'
+version = '1.6.8'
 
 authors = [ 'ben.skinner',
             'daniel.flood',
@@ -10,7 +10,8 @@ authors = [ 'ben.skinner',
 ]
 
 requires = ['libzmq-4',
-            'cppzmq-4'
+            'cppzmq-4',
+            'os-RedHatEnterprise-9+'
 ]
 
 private_build_requires = [
@@ -24,7 +25,7 @@ variants = [
   ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.72.1', 'python-3.7', '!tbb_katana','!boost_katana', '!nuke'], # houdini 19.5 3.7
   ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.72.1', 'python-3.9', '!tbb_katana','!boost_katana', '!nuke'], # houdini 19.5 3.9
   ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.72.1', 'python-3.10', '!tbb_katana','!boost_katana', '!nuke'], # houdini 20
-  ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.82.0.0', 'python-3.10', '!tbb_katana','!boost_katana', '!nuke'], # houdini 20.5 py3.10
+  ['platform-linux', 'arch-x86_64', 'tbb-2020.3', 'boost-1.82.0.2', 'python-3.10', '!tbb_katana','!boost_katana', '!nuke'], # houdini 20.5 py3.10
   ['platform-linux', 'arch-x86_64', 'tbb_katana-2020.3', 'boost_katana-1.76', '!tbb', '!boost', '!maya', '!nuke', '!blender'], #katana 6.5/mari 6
   ['platform-linux', 'arch-x86_64', 'tbb_katana-2020.3', 'boost_katana-1.80', '!tbb', '!boost', '!maya', '!nuke', '!blender'], #Katana 7/Mari 7
   ['platform-linux', 'arch-x86_64', 'tbb_katana-2020.3', 'boost_katana-1.82', '!tbb', '!boost', '!maya', '!nuke', '!blender'], #Katana 8
