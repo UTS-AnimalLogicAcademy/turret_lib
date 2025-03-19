@@ -60,3 +60,6 @@ cmake --build . --config Release --target install -- /M:16
 
 Find Boost will often automatically find USD Version of Boost. By default the USD repo doesnt install Boost-Serialization.
 
+##### C++ 11 ABI
+If the `$CXX11_ABI_IGNORE` environment variable is set for a particular build, the `_GLIBCXX_USE_CXX11_ABI=0` flag will be set for that build. This is useful when building against a DCC that was built with the old C++ ABI.
+
