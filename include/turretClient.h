@@ -25,8 +25,6 @@
 #include <boost/serialization/serialization.hpp>
 
 #include "tbb/concurrent_hash_map.h"
-#include "tbb/mutex.h"
-#include "tbb/tbb_thread.h"
 
 namespace turret_client
 {

@@ -2,7 +2,7 @@
 
 name = 'turret_lib'
 
-version = '1.6.8'
+version = '1.7.0'
 
 authors = [ 'ben.skinner',
             'daniel.flood',

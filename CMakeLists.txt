@@ -47,7 +47,7 @@ add_definitions(${TBB_DEFINITIONS})
 
 target_include_directories(turret PRIVATE
         ${CMAKE_SOURCE_DIR}/include
-        ${PC_LIBZMQ_INCLUDE_DIRS}
+        ${ZeroMQ_INCLUDE_DIR}
         ${Boost_INCLUDE_DIRS}
         ${CPPZMQ_INCLUDE_DIRS}
         ${TBB_INCLUDE_DIR}
@@ -55,7 +55,7 @@ target_include_directories(turret PRIVATE
 
 target_include_directories(turret PRIVATE
         ${CMAKE_SOURCE_DIR}/include
-        ${PC_LIBZMQ_INCLUDE_DIRS}
+        ${ZeroMQ_INCLUDE_DIR}
         ${Boost_INCLUDE_DIRS}
         ${CPPZMQ_INCLUDE_DIRS}
         )
